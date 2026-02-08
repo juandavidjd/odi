@@ -1,0 +1,3620 @@
+{
+  "Frenos": {
+    "Freno delantero de disco": [
+      "Pastilla de freno",
+      "Disco de freno",
+      "Caliper de freno",
+      "Bomba de freno",
+      "Manguera de freno",
+      "Palanca de freno",
+      "Cable",
+      "Manija de freno",
+      "Palanca",
+      "Tapones de goma",
+      "Mordaza de freno",
+      "Freno de disco",
+      "Freno de disco delantero"
+    ],
+    "Freno trasero de disco": [
+      "Pastilla de freno",
+      "Campana de freno",
+      "Caliper de freno",
+      "Disco de freno",
+      "Tapa de freno",
+      "Pedal de freno",
+      "Soporte de disco de freno",
+      "Manguera de freno"
+    ],
+    "Freno trasero de campana": [
+      "Campana de freno",
+      "Banda de freno",
+      "Zapatas de freno",
+      "Cable de freno",
+      "Porta balatas",
+      "Palanca de freno",
+      "Varilla de freno",
+      "Soporte de freno",
+      "Tambor de freno",
+      "Plato de freno",
+      "Portazapatas",
+      "Porta plato",
+      "Porta plato de freno",
+      "Tornillo de ajuste",
+      "Tope de goma",
+      "Varilla",
+      "Guaya de freno",
+      "Bandas de freno",
+      "Varillas de empuje",
+      "Porta bandas",
+      "Porta bandas de freno"
+    ],
+    "Fijación de disco de freno": [
+      "Tornillo"
+    ],
+    "Fijación disco de freno": [
+      "Tornillo"
+    ],
+    "Freno trasero de disco hidráulico": [
+      "Freno de disco trasero"
+    ],
+    "Freno trasero hidráulico": [
+      "Bomba de freno",
+      "Manguera de freno"
+    ],
+    "Freno delantero hidráulico": [
+      "Bomba de freno",
+      "Manguera de freno",
+      "Manija de freno hidráulico"
+    ],
+    "Freno trasero de pedal": [
+      "Eje pedal de freno",
+      "Pedal de freno",
+      "Palanca de freno",
+      "Cubierta de pedal"
+    ],
+    "Freno trasero de tambor": [
+      "Banda de freno",
+      "Zapatas de freno",
+      "Zapata de freno",
+      "Pedal de freno",
+      "Tapa de freno",
+      "Palanca de freno",
+      "Tambor de freno",
+      "Plato de freno",
+      "Tornillo de fijación",
+      "Cubierta de freno",
+      "Pernos de freno",
+      "Resorte de freno",
+      "Portabandas de freno",
+      "Cilindro maestro",
+      "Cilindro de freno",
+      "Porta bandas",
+      "Porta bandas de freno"
+    ],
+    "Freno de disco delantero o trasero": [
+      "Caliper de freno",
+      "Pastilla de freno"
+    ],
+    "Bomba de freno": [
+      "Abrazadera"
+    ],
+    "Freno delantero o trasero de manillar": [
+      "Abrazadera de freno"
+    ],
+    "Freno delantero o trasero de disco": [
+      "Pastilla de freno",
+      "Separador de pastillas",
+      "Disco de freno",
+      "Resortes de freno",
+      "Soporte de pastilla de freno",
+      "Caliper"
+    ],
+    "Palanca de freno delantero o trasero": [
+      "Palanca"
+    ],
+    "Freno de disco": [
+      "Pastilla de freno",
+      "Disco de freno"
+    ],
+    "Palanca de freno delantero": [
+      "Palanca"
+    ],
+    "Freno trasero de banda": [
+      "Cable de freno"
+    ],
+    "Palanca de freno o embrague": [
+      "Palanca",
+      "Manigueta"
+    ],
+    "Sensor de freno trasero": [
+      "Sensor de freno",
+      "Sensor"
+    ],
+    "Soporte manija de freno o clutch": [
+      "Abrazadera de manija"
+    ],
+    "Pedal de freno trasero": [
+      "Soporte de pedal",
+      "Cubierta de pedal"
+    ],
+    "Freno delantero de campana": [
+      "Cable de freno",
+      "Campana de freno",
+      "Porta bandas"
+    ],
+    "Freno delantero de tambor": [
+      "Plato de freno",
+      "Cable de freno",
+      "Campana de freno",
+      "Porta bandas"
+    ],
+    "Palanca de freno delantero o embrague": [
+      "Palanca"
+    ],
+    "Freno trasero de disco o tambor": [
+      "Pedal de freno"
+    ],
+    "Manija de freno delantero": [
+      "Soporte de manija"
+    ],
+    "Interruptor de luz de freno": [
+      "Interruptor de freno"
+    ],
+    "Pedal de freno": [
+      "Cubierta de pedal"
+    ],
+    "Palanca de freno o embrague delantero": [
+      "Palanca",
+      "Manigueta"
+    ],
+    "Freno delantero de disco o tambor": [
+      "Palanca de freno"
+    ],
+    "Freno delantero y trasero CBS": [
+      "Cable de freno"
+    ],
+    "Freno delantero CBS": [
+      "Cable de freno"
+    ],
+    "Soporte manija de freno o embrague": [
+      "Soporte manija"
+    ],
+    "Soporte palanca de freno o embrague": [
+      "Soporte manillar"
+    ],
+    "Pedal de freno o embrague": [
+      "Goma pedal",
+      "Pedal de freno",
+      "Pedal",
+      "Cubierta de pedal"
+    ],
+    "Interruptor de luz de freno trasero": [
+      "Interruptor"
+    ],
+    "Freno trasero": [
+      "Interruptor de freno"
+    ],
+    "Pedal de freno o cambio": [
+      "Goma pedal",
+      "Cubierta de pedal"
+    ],
+    "Sensor de luz de freno trasero": [
+      "Sensor"
+    ],
+    "Sistema eléctrico de freno trasero": [
+      "Interruptor"
+    ],
+    "Freno hidráulico": [
+      "Tornillo"
+    ],
+    "Depósito de líquido de frenos": [
+      "Tapa",
+      "Tapón"
+    ],
+    "Sistema de freno hidráulico": [
+      "Válvula"
+    ],
+    "Manigueta de freno o embrague": [
+      "Soporte de manigueta",
+      "Manigueta"
+    ],
+    "Soporte manigueta de freno o embrague": [
+      "Soporte de manigueta"
+    ],
+    "Depósito de líquido de freno o embrague": [
+      "Depósito hidráulico"
+    ],
+    "Bomba de freno hidráulica con depósito": [
+      "Bomba de freno"
+    ],
+    "Freno de mano": [
+      "Chapeta de freno",
+      "Palanca de freno",
+      "Guaya"
+    ],
+    "Sistema ABS de freno hidráulico": [
+      "Bomba reguladora"
+    ],
+    "Freno trasero hidráulico de disco": [
+      "Caliper de freno hidráulico"
+    ],
+    "Freno de disco trasero": [
+      "Disco de freno",
+      "Pastilla de freno"
+    ],
+    "Freno delantero y trasero de disco": [
+      "Pastilla de freno"
+    ]
+  },
+  "Transmisión": {
+    "Embrague": [
+      "Canastilla de clutch",
+      "Rodamiento",
+      "Discos de embrague",
+      "Disco de embrague",
+      "Discos de clutch",
+      "Campana de clutch",
+      "Eje",
+      "Prensa de clutch",
+      "Embrague",
+      "Prensa de embrague",
+      "Disco separador",
+      "Porta plato",
+      "Regulador",
+      "Extractor",
+      "Plato de presión",
+      "Cuña",
+      "Cable",
+      "Guaya",
+      "Corona de embrague",
+      "Clutch",
+      "Canastilla",
+      "Corona de clutch",
+      "Kit de clutch",
+      "Cubierta de clutch",
+      "Resorte de embrague",
+      "Espaciador"
+    ],
+    "Rodamiento de caja de cambios": [
+      "Rodamiento"
+    ],
+    "Rodamiento de eje": [
+      "Rodamiento"
+    ],
+    "Rodamiento de caja de transmisión": [
+      "Rodamiento"
+    ],
+    "Rodamiento de eje o cigüeñal": [
+      "Rodamiento"
+    ],
+    "Clutch": [
+      "Rodamiento de agujas",
+      "Corona de clutch",
+      "Carcasa",
+      "Cubierta de clutch",
+      "Eje de clutch",
+      "Eje de transmisión"
+    ],
+    "Eje de salida": [
+      "Rodamiento",
+      "Retén",
+      "Rodamiento de agujas",
+      "Canastilla"
+    ],
+    "Clutch y engranajes de transmisión": [
+      "Corona de clutch"
+    ],
+    "Embrague completo con corona dentada": [
+      "Clutch"
+    ],
+    "Tensión de cadena secundaria": [
+      "Tensor de cadena"
+    ],
+    "Tensión de cadenilla": [
+      "Tensor de cadenilla"
+    ],
+    "Tensionador de cadena de distribución": [
+      "Tensionador"
+    ],
+    "Tensor automático de cadenilla": [
+      "Tensor de cadena"
+    ],
+    "Tensión de cadena de transmisión": [
+      "Tensor de cadena"
+    ],
+    "Tensor automático de cadena de distribución": [
+      "Tensor de cadena"
+    ],
+    "Transmisión automática CVT": [
+      "Correa de transmisión"
+    ],
+    "Transmisión variable continua (CVT)": [
+      "Correa de transmisión"
+    ],
+    "Transmisión por correa para scooter": [
+      "Correa de transmisión"
+    ],
+    "Embrague automático tipo campana": [
+      "Embrague automático"
+    ],
+    "Embrague automático (centrífugo)": [
+      "Embrague"
+    ],
+    "Mecanismo de cambio de marchas": [
+      "Eje de cambio",
+      "Palanca de cambios",
+      "Pedal de cambio",
+      "Pedal de cambios",
+      "Selector de cambio",
+      "Horquilla de cambio"
+    ],
+    "Mecanismo de cambio de velocidades": [
+      "Eje de cambio",
+      "Horquilla de cambio",
+      "Palanca de cambios",
+      "Palanca de cambio",
+      "Horquillas de cambio",
+      "Pedal de cambio"
+    ],
+    "Caja de cambios": [
+      "Caja de cambios",
+      "Eje",
+      "Eje de transmisión",
+      "Horquillas de cambio",
+      "Selector de cambios",
+      "Eje de cambios",
+      "Piñones y eje de transmisión"
+    ],
+    "Caja de cambios manual": [
+      "Caja de cambios"
+    ],
+    "Caja de cambios / Reversa": [
+      "Caja de reversa"
+    ],
+    "Caja de reversa": [
+      "Caja de cambios",
+      "Piñón"
+    ],
+    "Embrague (Clutch)": [
+      "Eje primario"
+    ],
+    "Piñón de salida": [
+      "Eje",
+      "Eje con engranaje",
+      "Eje de transmisión",
+      "Eje con piñón",
+      "Eje de piñón"
+    ],
+    "Eje de salida de caja de cambios": [
+      "Eje"
+    ],
+    "Eje de piñón de salida": [
+      "Eje"
+    ],
+    "Polea primaria": [
+      "Buje"
+    ],
+    "Selector de velocidades": [
+      "Selector de cambio",
+      "Palanca de cambio"
+    ],
+    "Selector de cambios": [
+      "Tope selector de cambio",
+      "Selector de cambios"
+    ],
+    "Cardán delantero": [
+      "Cruceta"
+    ],
+    "Palanca de cambio": [
+      "Pedal de cambio"
+    ],
+    "Sistema de reversa": [
+      "Piñón"
+    ],
+    "Diferencial": [
+      "Piñón de diferencial",
+      "Piñón diferencial",
+      "Engranajes cónicos",
+      "Soporte diferencial"
+    ],
+    "Eje cardán": [
+      "Cardán",
+      "Conexión cardán"
+    ],
+    "Eje trasero con freno de tambor": [
+      "Eje trasero"
+    ],
+    "Eje trasero con diferencial y frenos de tambor": [
+      "Eje trasero"
+    ],
+    "Reversa": [
+      "Piñón",
+      "Engranajes"
+    ],
+    "Variador CVT": [
+      "Variador"
+    ],
+    "Kit arrastre": [
+      "Plato de arrastre",
+      "Piñón y corona",
+      "Piñón",
+      "Porta plato",
+      "Punta de arrastre",
+      "Horquilla de arrastre",
+      "Engranajes"
+    ],
+    "Fijación de sprocket": [
+      "Tornillo de fijación",
+      "Tornillos y tuercas",
+      "Tornillo",
+      "Tornillería de transmisión",
+      "Tornillería"
+    ],
+    "Sprocket / Piñón de cadena": [
+      "Tornillos de sprocket"
+    ],
+    "Fijación de sprocket (piñón o corona)": [
+      "Tornillos y tuercas"
+    ],
+    "Rodamiento de eje o rueda": [
+      "Rodamiento"
+    ],
+    "Piñón de arrastre": [
+      "Engranaje"
+    ],
+    "Embrague unidireccional": [
+      "Embrague"
+    ],
+    "Rodamientos de eje o rueda": [
+      "Rodamiento"
+    ],
+    "Engranajes": [
+      "Lubricante",
+      "Aceite"
+    ],
+    "Correa de transmisión primaria": [
+      "Correa de transmisión"
+    ],
+    "Tensor de cadena trasero": [
+      "Tensor de cadena"
+    ],
+    "Piñón de salida o arrastre": [
+      "Piñón"
+    ],
+    "Transmisión secundaria": [
+      "Corona dentada",
+      "Corona",
+      "Porta corona",
+      "Kit de transmisión",
+      "Porta bandas",
+      "Porta sprocket"
+    ],
+    "Rueda trasera": [
+      "Porta rodamiento",
+      "Buje de rueda",
+      "Eje"
+    ],
+    "Transmisión por cadena trasera": [
+      "Corona",
+      "Piñón",
+      "Corona dentada",
+      "Plato dentado",
+      "Piñón trasero"
+    ],
+    "Transmisión por cadena": [
+      "Piñón y corona",
+      "Corona dentada",
+      "Kit arrastre",
+      "Corona trasera",
+      "Corona",
+      "Piñón",
+      "Polea",
+      "Guía de cadena",
+      "Kit transmisión",
+      "Kit de transmisión",
+      "Kit piñón y corona"
+    ],
+    "Palanca de cambio de pie": [
+      "Palanca de cambio",
+      "Palanca de cambios"
+    ],
+    "Porta corona trasero": [
+      "Porta corona"
+    ],
+    "Tensión de cadena trasera": [
+      "Tensor de cadena"
+    ],
+    "Sensor de velocidad de rueda": [
+      "Sensor de velocidad"
+    ],
+    "Kit de arrastre": [
+      "Piñón y corona"
+    ],
+    "Medidor de velocidad": [
+      "Sensor de velocidad"
+    ],
+    "Piñón delantero de cadena": [
+      "Piñón"
+    ],
+    "Ajuste de cadena trasera": [
+      "Tensor de cadena"
+    ],
+    "Palanca de cambios manual": [
+      "Palanca de cambio"
+    ],
+    "Rodamiento axial": [
+      "Rodamiento"
+    ],
+    "Transmisión secundaria / Variador": [
+      "Polea"
+    ],
+    "Palanca de cambio de velocidades": [
+      "Palanca de cambio",
+      "Palanca de cambios"
+    ],
+    "Cadena de transmisión primaria": [
+      "Cadena de transmisión",
+      "Cadena"
+    ],
+    "Transmisión secundaria (cadena y plato dentado trasero)": [
+      "Piñón o plato dentado"
+    ],
+    "Tensor de cadena trasera": [
+      "Tensor de cadena"
+    ],
+    "Arranque": [
+      "Piñón"
+    ],
+    "Transmisión trasera": [
+      "Porta piñón",
+      "Porta corona"
+    ],
+    "Accionamiento de embrague": [
+      "Cable de embrague"
+    ],
+    "Transmisión por correa para scooter o moto automática": [
+      "Correa de transmisión"
+    ],
+    "Cadena de transmisión principal": [
+      "Cadena de transmisión"
+    ],
+    "Cadena de transmisión primaria o secundaria": [
+      "Cadena de transmisión"
+    ],
+    "Arrastre de cadena": [
+      "Kit arrastre",
+      "Piñón",
+      "Corona dentada",
+      "Kit de arrastre"
+    ],
+    "Kit arrastre delantero": [
+      "Piñón"
+    ],
+    "Ajuste de cadena": [
+      "Tensor de cadena",
+      "Herramienta de ajuste",
+      "Tornillo"
+    ],
+    "Cadena de transmisión": [
+      "Herramienta de mantenimiento",
+      "Cadena de transmisión",
+      "Herramienta",
+      "Guía de cadena",
+      "Protector de cadena",
+      "Amortiguador de cadena",
+      "Tope de cadena",
+      "Tensor de cadena"
+    ],
+    "Tensión de cadena": [
+      "Tensor de cadena",
+      "Piñones tensor",
+      "Tensor"
+    ],
+    "Cadena primaria de transmisión": [
+      "Cadena de transmisión"
+    ],
+    "Kit arrastre cadena": [
+      "Kit de arrastre"
+    ],
+    "Arrastre delantero": [
+      "Piñón"
+    ],
+    "Palanca de cambio de velocidad": [
+      "Palanca de cambios",
+      "Palanca de cambio"
+    ],
+    "Transmisión por correa dentada": [
+      "Correa de transmisión"
+    ],
+    "Correa de transmisión CVT": [
+      "Correa de transmisión"
+    ],
+    "Plato dentado trasero": [
+      "Piñón o plato dentado"
+    ],
+    "Correa de transmisión para scooter": [
+      "Correa de transmisión"
+    ],
+    "Piñón de arrastre delantero": [
+      "Piñón"
+    ],
+    "Eje de componentes móviles": [
+      "Eje"
+    ],
+    "Herramientas de mantenimiento": [
+      "Extractor",
+      "Herramienta"
+    ],
+    "Eje trasero": [
+      "Tuerca",
+      "Herramienta de mantenimiento",
+      "Herramienta"
+    ],
+    "Mantenimiento y desmontaje": [
+      "Herramienta de taller"
+    ],
+    "Mantenimiento y ajuste de eje trasero": [
+      "Herramienta"
+    ],
+    "Tensor de cadena": [
+      "Polea tensora",
+      "Tornillo"
+    ],
+    "Ajuste de embrague o freno": [
+      "Tornillo de ajuste"
+    ],
+    "Desmontaje de piñones o coronas": [
+      "Herramienta de taller"
+    ],
+    "Herramienta para eje trasero": [
+      "Herramienta de mantenimiento"
+    ],
+    "Palanca de cambios": [
+      "Eje",
+      "Palanca de cambio",
+      "Selector de cambios"
+    ],
+    "Embrague centrífugo": [
+      "Placa de embrague"
+    ],
+    "Acople motor-transmisión": [
+      "Amortiguador de motor",
+      "Amortiguador de caucho"
+    ],
+    "Variador": [
+      "Rodillos",
+      "Rodamiento",
+      "Amortiguador de variador",
+      "Roldana de variador"
+    ],
+    "Aislador o soporte de cable": [
+      "Tope de goma"
+    ],
+    "Rodamiento de rueda trasera o delantera": [
+      "Rodamiento"
+    ],
+    "Soporte motor o transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Guía o tensor de cadena": [
+      "Tensor de cadena"
+    ],
+    "Guía de cadena": [
+      "Patín de cadena"
+    ],
+    "Amortiguador de vibraciones de transmisión": [
+      "Amortiguador de caucho"
+    ],
+    "Acoplamiento motor-transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Acople flexible o damper de transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Acople flexible de motor o caja de transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Protección de cadena": [
+      "Guía de cadena",
+      "Protector de cadena",
+      "Amortiguador de cadena",
+      "Tope de cadena"
+    ],
+    "Soporte de motor o transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Soporte de motor o caja de transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Tensión de banda": [
+      "Polea"
+    ],
+    "Palanca de cambios o freno": [
+      "Tope de goma"
+    ],
+    "Piñón de cadena": [
+      "Piñón"
+    ],
+    "Protección y amortiguación de cadena": [
+      "Amortiguador de cadena"
+    ],
+    "Amortiguador de transmisión para motocarguero o moto": [
+      "Amortiguador de transmisión"
+    ],
+    "Soporte de transmisión o motor": [
+      "Amortiguador de goma"
+    ],
+    "Aislador de cables o varillas": [
+      "Tope de goma"
+    ],
+    "Guía de cadena de transmisión": [
+      "Guía de cadena"
+    ],
+    "Protección y guía de cadena": [
+      "Guía de cadena"
+    ],
+    "Sistema de arrastre por banda o cadena": [
+      "Polea"
+    ],
+    "Transmisión por banda": [
+      "Polea tensora"
+    ],
+    "Amortiguador de transmisión": [
+      "Damper de transmisión"
+    ],
+    "Amortiguador de cadena": [
+      "Amortiguador de cadena"
+    ],
+    "Variador / Polea de transmisión": [
+      "Amortiguador de goma"
+    ],
+    "Polea de transmisión": [
+      "Amortiguador de polea"
+    ],
+    "Soporte de cable o varilla": [
+      "Abrazadera"
+    ],
+    "Protector de cadena": [
+      "Protector de cadena"
+    ],
+    "Guía o soporte de cadena": [
+      "Tope de cadena"
+    ],
+    "Acople de transmisión secundaria": [
+      "Amortiguador de torque"
+    ],
+    "Acople de transmisión": [
+      "Amortiguador de torque"
+    ],
+    "Sistema de embrague": [
+      "Guía de cable"
+    ],
+    "Transmisión por variador": [
+      "Polea"
+    ],
+    "Pedal de cambio": [
+      "Eje de pedal",
+      "Palanca de cambios"
+    ],
+    "Eje de transmisión": [
+      "Chaveta",
+      "Cruceta"
+    ],
+    "Seguridad de piñón de cadena": [
+      "Lámina de seguridad"
+    ],
+    "Cambio de velocidades": [
+      "Pedal de cambio"
+    ],
+    "Cable de control": [
+      "Terminal de guaya"
+    ],
+    "Control de embrague": [
+      "Palanca de embrague"
+    ],
+    "Cardán trasero": [
+      "Cardán",
+      "Cruceta"
+    ],
+    "Diferencial trasero": [
+      "Caja diferencial",
+      "Piñones de diferencial"
+    ],
+    "Caja de reversa para motocarguero": [
+      "Caja de reversa"
+    ],
+    "Piñón de reversa": [
+      "Piñón con rodamiento"
+    ],
+    "Control de emergencia": [
+      "Cable de control"
+    ],
+    "Embrague principal": [
+      "Embrague"
+    ],
+    "Mecanismo de cambio": [
+      "Selector de cambios"
+    ],
+    "Control diferencial": [
+      "Guaya"
+    ],
+    "Eje de clutch": [
+      "Rodamiento"
+    ],
+    "Rodamiento de transmisión": [
+      "Balinera"
+    ],
+    "Selector de marchas": [
+      "Selector de cambio",
+      "Selector de cambios"
+    ],
+    "Clutch / Embrague": [
+      "Embrague"
+    ],
+    "Embrague automático centrífugo": [
+      "Embrague"
+    ],
+    "Embrague automático para scooter": [
+      "Embrague automático"
+    ],
+    "Embrague automático para scooter o moto automática": [
+      "Embrague automático"
+    ],
+    "Embrague automático centrifugo": [
+      "Embrague"
+    ],
+    "Embrague automático tipo variador": [
+      "Embrague automático"
+    ],
+    "Kit de clutch completo": [
+      "Embrague"
+    ],
+    "Embrague y engranajes de transmisión": [
+      "Kit de clutch",
+      "Embrague y transmisión"
+    ],
+    "Arrastre primario y campana de embrague": [
+      "Corona y piñón"
+    ],
+    "Piñón primario y corona de clutch": [
+      "Corona y piñón"
+    ],
+    "Embrague (clutch)": [
+      "Kit de clutch"
+    ],
+    "Transmisión primaria y embrague": [
+      "Kit transmisión primaria"
+    ],
+    "Embrague y piñón primario": [
+      "Corona de clutch"
+    ],
+    "Embrague completo con prensa y discos": [
+      "Embrague"
+    ],
+    "Embrague completo": [
+      "Embrague"
+    ],
+    "Embrague de discos múltiples": [
+      "Embrague",
+      "Prensa de clutch"
+    ],
+    "Embrague completo con corona y piñón": [
+      "Embrague"
+    ],
+    "Cardán": [
+      "Cruceta"
+    ],
+    "Embrague (Clutch) de motos utilitarias": [
+      "Clutch"
+    ],
+    "Eje de clutch y salida": [
+      "Eje de transmisión"
+    ],
+    "Eje de clutch y eje de salida": [
+      "Eje de transmisión"
+    ],
+    "Eje primario de clutch": [
+      "Eje de transmisión"
+    ],
+    "Eje primario de transmisión": [
+      "Eje de transmisión"
+    ],
+    "Tensión y guía de cadenilla secundaria": [
+      "Guía y tensor de cadena"
+    ],
+    "Tensor y guía de cadenilla": [
+      "Tensor de cadena"
+    ],
+    "Guía y tensor de cadenilla": [
+      "Guía y tensor de cadena"
+    ],
+    "Transmisión primaria y lubricación": [
+      "Kit transmisión"
+    ],
+    "Kit de piñón de salida": [
+      "Piñón y rodamiento"
+    ],
+    "Arrastre cadena": [
+      "Kit arrastre"
+    ],
+    "Mecanismo de cambio de reversa": [
+      "Pedal"
+    ],
+    "Piñón de cigüeñal": [
+      "Piñón"
+    ],
+    "Sincronizador de cigüeñal": [
+      "Piñón"
+    ],
+    "Kit piñón y corona": [
+      "Engranajes de transmisión"
+    ],
+    "Piñón primario": [
+      "Piñón"
+    ],
+    "Piñón primario de arranque": [
+      "Piñón"
+    ],
+    "Engranaje de reversa": [
+      "Piñón"
+    ],
+    "Transmisión primaria delantera": [
+      "Porta bandas"
+    ],
+    "Porta bandas trasero": [
+      "Porta bandas"
+    ],
+    "Porta piñón trasero": [
+      "Porta piñón"
+    ],
+    "Porta sprocket trasero": [
+      "Porta sprocket"
+    ],
+    "Porta sprocket con balineras y reten": [
+      "Porta sprocket"
+    ],
+    "Porta sprocket con balinera y reten": [
+      "Porta sprocket"
+    ],
+    "Embrague de disco": [
+      "Embrague"
+    ],
+    "Embrague múltiple": [
+      "Prensa de clutch"
+    ],
+    "Embrague de disco múltiple": [
+      "Embrague"
+    ],
+    "Variador y transmisión primaria": [
+      "Variador"
+    ],
+    "Variador y roldanas": [
+      "Variador"
+    ],
+    "Eje de transmisión principal": [
+      "Eje de transmisión"
+    ]
+  },
+  "Suspensión": {
+    "Suspensión delantera con resortes": [
+      "Suspensión delantera"
+    ],
+    "Suspensión delantera telescópica": [
+      "Suspensión delantera"
+    ],
+    "Horquilla telescópica delantera": [
+      "Suspensión delantera"
+    ],
+    "Rin trasero": [
+      "Rin"
+    ],
+    "Amortiguador trasero": [
+      "Amortiguador",
+      "Soporte de amortiguador",
+      "Kit de reparación",
+      "Tope de goma",
+      "Tope de suspensión",
+      "Soporte de goma",
+      "Protector de suspensión",
+      "Copa de goma",
+      "Buje",
+      "Protector de amortiguador"
+    ],
+    "Amortiguador delantero": [
+      "Amortiguador",
+      "Sello de goma",
+      "Cubierta de goma"
+    ],
+    "Amortiguador trasero monoshock": [
+      "Amortiguador"
+    ],
+    "Suspensión trasera": [
+      "Amortiguador",
+      "Eje con bujes",
+      "Eje de suspensión",
+      "Eje y bujes",
+      "Eje de suspensión trasera",
+      "Basculante",
+      "Buje",
+      "Brazo oscilante",
+      "Horquilla",
+      "Buje de suspensión",
+      "Fuelle"
+    ],
+    "Llanta delantera o trasera": [
+      "Llanta"
+    ],
+    "Llanta trasera o delantera todo terreno": [
+      "Llanta"
+    ],
+    "Neumático delantero o trasero": [
+      "Llanta"
+    ],
+    "Rueda delantera o trasera": [
+      "Llanta"
+    ],
+    "Rueda trasera o delantera": [
+      "Llanta",
+      "Eje de rueda",
+      "Rin"
+    ],
+    "Llanta trasera o delantera": [
+      "Llanta"
+    ],
+    "Llanta neumática": [
+      "Llanta"
+    ],
+    "Neumático": [
+      "Llanta"
+    ],
+    "Llanta delantera": [
+      "Llanta"
+    ],
+    "Rueda y neumático": [
+      "Llanta neumática",
+      "Neumático",
+      "Llanta"
+    ],
+    "Llanta trasera o delantera para uso todo terreno": [
+      "Neumático"
+    ],
+    "Rueda delantera": [
+      "Llanta",
+      "Radio de rueda",
+      "Rayos de rueda",
+      "Rin"
+    ],
+    "Llanta trasera o delantera para moto multipropósito": [
+      "Neumático"
+    ],
+    "Llanta/Neumático delantero o trasero": [
+      "Neumático"
+    ],
+    "Rueda trasera": [
+      "Buje",
+      "Radio de rueda",
+      "Radios de rueda",
+      "Rayos de rueda",
+      "Rodamiento y eje",
+      "Eje",
+      "Eje de rueda",
+      "Eje trasero"
+    ],
+    "Rodamiento de rueda": [
+      "Rodamiento"
+    ],
+    "Rueda y llanta": [
+      "Rayos de rueda"
+    ],
+    "Soporte de rueda trasera": [
+      "Soporte de rueda"
+    ],
+    "Dirección": [
+      "Rodamiento"
+    ],
+    "Eje de rueda trasera": [
+      "Perno",
+      "Eje trasero",
+      "Eje",
+      "Eje de rueda"
+    ],
+    "Horquilla delantera": [
+      "Herramienta",
+      "Tapón",
+      "Tapón de goma",
+      "Fuelle de horquilla",
+      "Buje de goma",
+      "Fuelle de suspensión",
+      "Retén",
+      "Fuelle",
+      "Retén de horquilla",
+      "Separador",
+      "Sello de horquilla",
+      "Protector de horquilla",
+      "Guardapolvo",
+      "Retenes y anillos"
+    ],
+    "Eje trasero": [
+      "Espaciador de eje",
+      "Eje"
+    ],
+    "Fijación de rueda": [
+      "Tornillo de rueda"
+    ],
+    "Ajuste de suspensión trasera o delantera": [
+      "Llave de gancho"
+    ],
+    "Fijación de rueda trasera": [
+      "Perno"
+    ],
+    "Amortiguación de vibraciones": [
+      "Tope de goma",
+      "Soporte de goma",
+      "Tope de caucho"
+    ],
+    "Soporte de rodamiento de suspensión": [
+      "Soporte"
+    ],
+    "Eje de rueda o suspensión": [
+      "Eje"
+    ],
+    "Eje de rueda o eje de suspensión": [
+      "Eje"
+    ],
+    "Mantenimiento y reparación de bujes y rodamientos": [
+      "Herramienta de taller"
+    ],
+    "Tope de suspensión": [
+      "Tope de goma"
+    ],
+    "Basculante trasero": [
+      "Eje y bujes",
+      "Eje de basculante",
+      "Eje con bujes",
+      "Buje y eje",
+      "Rodamiento y eje",
+      "Tope de goma"
+    ],
+    "Eje trasero con bujes": [
+      "Eje trasero"
+    ],
+    "Eje trasero con rodamientos": [
+      "Eje trasero"
+    ],
+    "Eje trasero de rueda": [
+      "Eje de rueda"
+    ],
+    "Eje rueda trasera": [
+      "Eje trasero"
+    ],
+    "Tope de suspensión o soporte de motor": [
+      "Tope de goma"
+    ],
+    "Horquilla delantera o suspensión trasera": [
+      "Amortiguador de goma"
+    ],
+    "Soporte o aislante de suspensión": [
+      "Buje de goma"
+    ],
+    "Suspensión delantera": [
+      "Fuelle",
+      "Guardapolvo",
+      "Fuelle de suspensión",
+      "Horquilla delantera",
+      "Horquilla superior",
+      "Eje",
+      "Horquilla inferior"
+    ],
+    "Protector de horquilla o dirección": [
+      "Fuelle"
+    ],
+    "Montaje de amortiguador": [
+      "Soporte de goma"
+    ],
+    "Buje de brazo oscilante o suspensión trasera": [
+      "Buje"
+    ],
+    "Soporte de motor o chasis": [
+      "Tope de goma",
+      "Amortiguador de goma"
+    ],
+    "Amortiguador o soporte de chasis": [
+      "Tope de goma"
+    ],
+    "Tope de suspensión o amortiguador": [
+      "Tope de goma"
+    ],
+    "Soporte de suspensión o brazo oscilante": [
+      "Buje"
+    ],
+    "Soporte de barra estabilizadora o motor": [
+      "Buje de goma"
+    ],
+    "Tope de suspensión o chasis": [
+      "Tope de goma"
+    ],
+    "Amortiguación y soporte motor": [
+      "Tope de goma"
+    ],
+    "Soporte motor o chasis": [
+      "Amortiguador de goma"
+    ],
+    "Amortiguador trasero o delantero": [
+      "Tope de goma",
+      "Soporte de amortiguador"
+    ],
+    "Amortiguador": [
+      "Tope de goma",
+      "Rodamiento de goma"
+    ],
+    "Tope de amortiguador trasero": [
+      "Tope de suspensión"
+    ],
+    "Amortiguación y soporte": [
+      "Buje"
+    ],
+    "Soporte amortiguador delantero o trasero": [
+      "Amortiguador"
+    ],
+    "Tope de suspensión trasera o delantera": [
+      "Tope de goma",
+      "Tope de suspensión"
+    ],
+    "Soporte de barra estabilizadora o brazo de suspensión": [
+      "Buje"
+    ],
+    "Tope de suspensión trasera": [
+      "Tope de goma",
+      "Tope de suspensión"
+    ],
+    "Tope de suspensión trasero": [
+      "Tope de suspensión"
+    ],
+    "Rueda": [
+      "Rodamiento",
+      "Eje"
+    ],
+    "Amortiguación de pedal o soporte": [
+      "Amortiguador de goma"
+    ],
+    "Tope de suspensión o soporte": [
+      "Tope de goma"
+    ],
+    "Amortiguación": [
+      "Arandela",
+      "Tope de goma"
+    ],
+    "Brazo oscilante trasero": [
+      "Basculante"
+    ],
+    "Barra estabilizadora": [
+      "Buje"
+    ],
+    "Soporte de suspensión o chasis": [
+      "Silentblock"
+    ],
+    "Buje amortiguador o brazo oscilante": [
+      "Buje de suspensión"
+    ],
+    "Estabilizador trasero o delantero": [
+      "Barra estabilizadora"
+    ],
+    "Eje de rueda delantero o trasero": [
+      "Eje"
+    ],
+    "Eje de rueda delantera o trasera": [
+      "Eje"
+    ],
+    "Suspensión trasera - tijera": [
+      "Buje de suspensión"
+    ],
+    "Cuna trasera": [
+      "Rodamientos"
+    ],
+    "Amortiguador trasero mono-shock": [
+      "Amortiguador"
+    ],
+    "Estabilizador trasero": [
+      "Barra estabilizadora"
+    ],
+    "Rin delantero": [
+      "Rin"
+    ]
+  },
+  "Motor": {
+    "Cigüeñal": [
+      "Rodamiento",
+      "Cigüeñal",
+      "Eje",
+      "Eje de cigüeñal"
+    ],
+    "Rodamiento de cigüeñal": [
+      "Rodamiento"
+    ],
+    "Rodamientos internos": [
+      "Rodamiento"
+    ],
+    "Sistema de cigüeñal": [
+      "Rodamiento",
+      "Cigüeñal"
+    ],
+    "Distribución de válvulas": [
+      "Balancín"
+    ],
+    "Sistema de distribución": [
+      "Balancín",
+      "Válvula de motor",
+      "Válvulas de motor",
+      "Válvula"
+    ],
+    "Sistema de válvulas": [
+      "Balancín",
+      "Válvula de motor",
+      "Válvulas de motor",
+      "Válvula",
+      "Disco de ajuste",
+      "Impulsador",
+      "Guía de válvula",
+      "Válvulas",
+      "Varillas de empuje"
+    ],
+    "Distribución": [
+      "Balancín",
+      "Árbol de levas",
+      "Cadena de distribución",
+      "Kit de distribución",
+      "Piñón de distribución",
+      "Árbol de leva",
+      "Tensor de cadena",
+      "Tensor",
+      "Guía de cadena",
+      "Polea",
+      "Cadena",
+      "Guía de cadenilla",
+      "Piñones y tensor de cadena",
+      "Engranaje",
+      "Guía y tensor de cadenilla",
+      "Tensor de cadenilla",
+      "Tensor y guía de cadena",
+      "Tensor y guía de cadenilla",
+      "Válvulas",
+      "Piñón"
+    ],
+    "Sistema de cigüeñal y biela": [
+      "Cigüeñal"
+    ],
+    "Motor 2 tiempos": [
+      "Cigüeñal"
+    ],
+    "Cigüeñal y biela": [
+      "Cigüeñal"
+    ],
+    "Cigüeñal y transmisión interna": [
+      "Cigüeñal"
+    ],
+    "Cilindro y pistón": [
+      "Cilindro y pistón",
+      "Cilindro de motor",
+      "Pistón",
+      "Pistón y anillos",
+      "Anillos de pistón",
+      "Kit motor"
+    ],
+    "Culata y válvulas": [
+      "Culata"
+    ],
+    "Admisión": [
+      "Soporte carburador",
+      "Base de carburador",
+      "Válvula de láminas",
+      "Filtro",
+      "Junta de admisión",
+      "Base carburador",
+      "Adaptador de carburador",
+      "Múltiple de admisión",
+      "Tubo de admisión",
+      "Colector de admisión",
+      "Adaptador carburador",
+      "Conector de admisión",
+      "Manguera de admisión",
+      "Fuelle de admisión",
+      "Adaptador de admisión",
+      "Brida de admisión",
+      "Empaquetadura",
+      "Válvula",
+      "Conector de goma",
+      "Filtro de aire"
+    ],
+    "Sistema de alimentación": [
+      "Carburador"
+    ],
+    "Sistema de alimentación de combustible": [
+      "Carburador",
+      "Filtro de combustible"
+    ],
+    "Motor completo": [
+      "Motor"
+    ],
+    "Motor completo 4 tiempos": [
+      "Motor"
+    ],
+    "Sistema de pistón y biela": [
+      "Biela"
+    ],
+    "Sistema de transmisión interna": [
+      "Biela"
+    ],
+    "Sistema de transmisión de movimiento": [
+      "Biela"
+    ],
+    "Sistema de transmisión de fuerza interna": [
+      "Biela"
+    ],
+    "Motor de combustión interna": [
+      "Biela"
+    ],
+    "Sistema de lubricación": [
+      "Rotor",
+      "Retén"
+    ],
+    "Lubricación": [
+      "Bomba de aceite",
+      "Bomba de lubricación",
+      "Aceite lubricante",
+      "Aceite motor",
+      "Filtro de aceite",
+      "Piñón",
+      "Rotor"
+    ],
+    "Admisión motor 2 tiempos": [
+      "Válvula de láminas"
+    ],
+    "Sistema de enfriamiento": [
+      "Depósito de refrigerante",
+      "Retenes y sello",
+      "Sello y polea"
+    ],
+    "Lubricación motor 4 tiempos": [
+      "Aceite lubricante"
+    ],
+    "Lubricación motor 2 tiempos": [
+      "Aceite lubricante",
+      "Bomba de lubricación"
+    ],
+    "Arranque": [
+      "Bendix",
+      "Engranaje",
+      "Herramienta",
+      "Herramienta especial",
+      "Herramienta de mantenimiento",
+      "Piñón",
+      "Bendix de arranque",
+      "Piñón de arranque"
+    ],
+    "Alimentación de combustible": [
+      "Carburador"
+    ],
+    "Suministro de combustible": [
+      "Carburador"
+    ],
+    "Filtrado de aceite": [
+      "Filtro de aceite"
+    ],
+    "Montaje y fijación de motor": [
+      "Varilla de soporte"
+    ],
+    "Control de acelerador": [
+      "Cable",
+      "Cable de acelerador"
+    ],
+    "Admisión de aire": [
+      "Filtro de aire",
+      "Manguera",
+      "Manguera de admisión",
+      "Fuelle de admisión",
+      "Adaptador de admisión",
+      "Conector de admisión"
+    ],
+    "Control de aceleración": [
+      "Cable de acelerador",
+      "Cable"
+    ],
+    "Carburador": [
+      "Kit carburador",
+      "Aguja de carburador",
+      "Carburador",
+      "Kit de carburador",
+      "Diafragma",
+      "Diafragma carburador",
+      "Flotador",
+      "Junta"
+    ],
+    "Carburación": [
+      "Kit carburador"
+    ],
+    "Arranque manual": [
+      "Palanca de arranque",
+      "Pedal de arranque"
+    ],
+    "Acelerador": [
+      "Cable"
+    ],
+    "Sistema de refrigeración": [
+      "Porta aspas"
+    ],
+    "Arranque / Volante magnético": [
+      "Extractor",
+      "Extractor de volante"
+    ],
+    "Fijación de componentes": [
+      "Tornillo y tuerca",
+      "Tornillo"
+    ],
+    "Volante magnético": [
+      "Extractor",
+      "Herramienta especial",
+      "Herramienta de mantenimiento",
+      "Herramienta de motor",
+      "Extractor de volante",
+      "Herramienta de taller"
+    ],
+    "Encendido": [
+      "Herramienta especial",
+      "Extractor",
+      "Extractor de volante",
+      "Herramienta de extracción"
+    ],
+    "Mantenimiento de bujía": [
+      "Herramienta"
+    ],
+    "Sistema de encendido": [
+      "Herramienta especial",
+      "Herramienta de mantenimiento",
+      "Herramienta de taller",
+      "Extractor"
+    ],
+    "Arranque y encendido": [
+      "Extractor"
+    ],
+    "Mantenimiento": [
+      "Herramienta"
+    ],
+    "Mantenimiento y ajuste de bujías": [
+      "Herramienta de bujía"
+    ],
+    "Transmisión": [
+      "Herramienta de extracción"
+    ],
+    "Montaje y fijación": [
+      "Perno"
+    ],
+    "Ajuste o montaje de componentes": [
+      "Perno"
+    ],
+    "Herramientas de mantenimiento": [
+      "Extractor de rodamientos"
+    ],
+    "Montaje y sujeción de componentes": [
+      "Collarín"
+    ],
+    "Sujeción de eje o cigüeñal": [
+      "Collarín"
+    ],
+    "Volante motor": [
+      "Contrapeso de volante"
+    ],
+    "Desmontaje de engranajes": [
+      "Herramienta de taller"
+    ],
+    "Sistema de lubricación o combustible": [
+      "Válvula"
+    ],
+    "Mantenimiento y desmontaje": [
+      "Herramienta de taller"
+    ],
+    "Mantenimiento y reparación de rodamientos": [
+      "Herramienta de taller"
+    ],
+    "Mantenimiento y ajuste": [
+      "Herramientas de motor",
+      "Herramienta"
+    ],
+    "Extracción de componentes": [
+      "Herramienta de mantenimiento"
+    ],
+    "Montaje de motor": [
+      "Soporte motor"
+    ],
+    "Mantenimiento y reparación": [
+      "Herramienta para bujías"
+    ],
+    "Fijación general": [
+      "Tornillo"
+    ],
+    "Reparación de roscas": [
+      "Inserto roscado"
+    ],
+    "Soporte de motor": [
+      "Amortiguador de motor",
+      "Amortiguador de goma",
+      "Tope de goma",
+      "Silentblock"
+    ],
+    "Montaje y soporte de motor": [
+      "Amortiguador de goma",
+      "Soporte de motor",
+      "Amortiguador",
+      "Soporte antivibración",
+      "Soporte motor",
+      "Tope de motor",
+      "Amortiguador de motor"
+    ],
+    "Montaje motor": [
+      "Soporte motor",
+      "Soporte antivibración"
+    ],
+    "Soporte motor": [
+      "Tope de motor",
+      "Tope de goma",
+      "Buje",
+      "Amortiguador de goma"
+    ],
+    "Suministro de combustible / vacío": [
+      "Manguera"
+    ],
+    "Sistemas de combustible o vacío": [
+      "Manguera"
+    ],
+    "Sistema de combustible o vacío": [
+      "Manguera"
+    ],
+    "Montaje y soporte motor": [
+      "Soporte motor",
+      "Soporte antivibración",
+      "Amortiguador de caucho",
+      "Amortiguador de goma",
+      "Tope de goma",
+      "Amortiguador"
+    ],
+    "Sistema de sellado": [
+      "Junta"
+    ],
+    "Sellado y estanqueidad": [
+      "Junta tórica",
+      "Retenes y sellos"
+    ],
+    "Montaje y soporte del motor": [
+      "Amortiguador de goma",
+      "Amortiguador"
+    ],
+    "Sellos y retenes de motor": [
+      "Retén",
+      "Retenes",
+      "Sello y retén",
+      "Retén de aceite",
+      "Retenes y sellos",
+      "Retenes y sello",
+      "Sello / Retén",
+      "Retenes de aceite",
+      "Retenes y juntas"
+    ],
+    "Culata": [
+      "Tapa de motor",
+      "Empaque",
+      "Culata"
+    ],
+    "Sistema de lubricación o enfriamiento": [
+      "Tapón roscado"
+    ],
+    "Sistema de refrigeración o admisión": [
+      "Conector de manguera"
+    ],
+    "Sellado de cigüeñal": [
+      "Retén"
+    ],
+    "Amortiguación de vibraciones": [
+      "Tope de goma"
+    ],
+    "Amortiguación de motor": [
+      "Tope de goma",
+      "Soporte motor"
+    ],
+    "Admisión de aire y mezcla": [
+      "Cuerpo de admisión",
+      "Conector de admisión"
+    ],
+    "Admisión de aire y combustible": [
+      "Toma de admisión"
+    ],
+    "Sistema de admisión": [
+      "Válvula",
+      "Válvula de motor"
+    ],
+    "Amortiguación motor": [
+      "Soporte motor"
+    ],
+    "Sistema de admisión o respiradero": [
+      "Conector de manguera"
+    ],
+    "Sistema de ventilación del cárter": [
+      "Válvula"
+    ],
+    "Soporte motor / Aislador vibración": [
+      "Amortiguador de goma"
+    ],
+    "Montaje y soporte": [
+      "Soporte motor"
+    ],
+    "Sellos y retenes de motor o transmisión": [
+      "Retenes y sellos"
+    ],
+    "Sellado de eje": [
+      "Retén"
+    ],
+    "Sellado de cigüeñal o eje": [
+      "Retén"
+    ],
+    "Retenedores de aceite para motor": [
+      "Retenedor"
+    ],
+    "Sellado de cigüeñal y ejes": [
+      "Retenes",
+      "Retenedor de aceite",
+      "Retén de aceite"
+    ],
+    "Sellado de motor y transmisión": [
+      "Retén de aceite"
+    ],
+    "Sellos de motor": [
+      "Retenedores",
+      "Retenedor",
+      "Retenes"
+    ],
+    "Retenedores de aceite": [
+      "Retenedor",
+      "Retenedores"
+    ],
+    "Sellos de aceite": [
+      "Retenes",
+      "Retenedor",
+      "Retén",
+      "Retenedores"
+    ],
+    "Sellado de motor": [
+      "Retenes y sellos",
+      "Retenes y juntas",
+      "Retén",
+      "Retenes",
+      "Juntas de motor"
+    ],
+    "Sellado y retención de fluidos": [
+      "Retenes y sellos",
+      "Retén y sello",
+      "Retén",
+      "Sello / Retén"
+    ],
+    "Sellos y retenedores de motor": [
+      "Retenedor",
+      "Retenedores"
+    ],
+    "Retenedores de aceite motor": [
+      "Retenedor",
+      "Retenedores"
+    ],
+    "Retén de aceite": [
+      "Retén"
+    ],
+    "Sellado de ejes y cigüeñal": [
+      "Retén de aceite",
+      "Retenes",
+      "Retén"
+    ],
+    "Sellos y retenes": [
+      "Sello de motor",
+      "Retén",
+      "Retén de aceite"
+    ],
+    "Sellos de aceite y retenes de motor": [
+      "Retenes",
+      "Retenes y sello"
+    ],
+    "Retenedores de cigüeñal y ejes": [
+      "Retenedores",
+      "Retenedor"
+    ],
+    "Sello de aceite de eje": [
+      "Retén"
+    ],
+    "Sello de aceite y retenes de motor": [
+      "Retenes"
+    ],
+    "Retenes de aceite": [
+      "Retenes"
+    ],
+    "Retenedores de cigüeñal y eje": [
+      "Retenedores",
+      "Retenedor"
+    ],
+    "Sistema de sellado de motor": [
+      "Retenes",
+      "Retenes y sello"
+    ],
+    "Sello y retenes de cigüeñal": [
+      "Retenes"
+    ],
+    "Sellos y retenes de motor y transmisión": [
+      "Retén"
+    ],
+    "Sellos de aceite y retenes de cigüeñal": [
+      "Retén",
+      "Retenes"
+    ],
+    "Sellos y juntas de motor": [
+      "Junta / Sello"
+    ],
+    "Sellos de aceite y retenes": [
+      "Retenes"
+    ],
+    "Sellos y retenedores": [
+      "Retenedor de aceite",
+      "Retenedor"
+    ],
+    "Transmisión interna / árbol de levas": [
+      "Cuña"
+    ],
+    "Transmisión interna": [
+      "Cuña"
+    ],
+    "Sellado de aceite": [
+      "Retenes"
+    ],
+    "Culata con válvulas": [
+      "Culata"
+    ],
+    "Cigüeñal y transmisión primaria": [
+      "Cigüeñal"
+    ],
+    "Juntas de culata y carter": [
+      "Juntas de motor"
+    ],
+    "Alimentación": [
+      "Carburador"
+    ],
+    "Juntas de culata y motor": [
+      "Juntas de motor"
+    ],
+    "Válvulas de admisión y escape": [
+      "Válvulas y sellos",
+      "Válvula",
+      "Válvulas"
+    ],
+    "Refrigeración": [
+      "Soporte metálico",
+      "Tapas de refrigerante"
+    ],
+    "Bomba de aceite": [
+      "Cadena"
+    ],
+    "Rodamientos de motor": [
+      "Balineras"
+    ],
+    "Conexión biela-pistón": [
+      "Biela"
+    ],
+    "Biela y conjunto de conexión": [
+      "Biela"
+    ],
+    "Motor 4 tiempos completo": [
+      "Motor"
+    ],
+    "Motor completo monocilíndrico 4T": [
+      "Motor"
+    ],
+    "Motor monocilíndrico 4 tiempos": [
+      "Motor"
+    ],
+    "Control de gases / Emisiones": [
+      "Válvula"
+    ],
+    "Cabeza del cilindro": [
+      "Culata"
+    ],
+    "Rodamientos internos del motor": [
+      "Balineras"
+    ],
+    "Sistema de biela y pistón": [
+      "Biela"
+    ],
+    "Control de emisiones": [
+      "Válvula de aire"
+    ],
+    "Segmentos de pistón": [
+      "Anillos de pistón"
+    ],
+    "Cilindro y cámara de combustión": [
+      "Cilindro"
+    ],
+    "Cilindro y culata": [
+      "Culata"
+    ],
+    "Motor de arranque": [
+      "Piñón"
+    ],
+    "Arranque eléctrico": [
+      "Bendix"
+    ],
+    "Bomba de lubricación": [
+      "Engranaje"
+    ],
+    "Cigüeñal y bielas": [
+      "Cigüeñal"
+    ],
+    "Cigüeñal y balancines": [
+      "Cigüeñal"
+    ],
+    "Cigüeñal y sistema de transmisión interna": [
+      "Cigüeñal"
+    ],
+    "Cilindro y sistema de pistón": [
+      "Cilindro y pistón"
+    ],
+    "Cilindro y grupo térmico": [
+      "Cilindro y pistón"
+    ],
+    "Cabeza de cilindro": [
+      "Culata"
+    ],
+    "Cigüeñal y componentes": [
+      "Cigüeñal"
+    ],
+    "Biela y cigüeñal": [
+      "Biela"
+    ],
+    "Biela y pasador": [
+      "Biela"
+    ],
+    "Biela y pistón": [
+      "Biela"
+    ],
+    "Sistema de biela y cigüeñal": [
+      "Biela"
+    ],
+    "Biela y casquillo": [
+      "Biela"
+    ],
+    "Transmisión interna del motor": [
+      "Biela"
+    ],
+    "Sistema de biela": [
+      "Biela"
+    ],
+    "Kit de pistón y anillos": [
+      "Pistón"
+    ]
+  },
+  "Combustible": {
+    "Carburador de motocicleta": [
+      "Carburador"
+    ],
+    "Bomba de gasolina": [
+      "Filtro de combustible",
+      "Filtro"
+    ],
+    "Filtro bomba de gasolina": [
+      "Filtro de combustible"
+    ],
+    "Bomba de combustible eléctrica con filtro": [
+      "Bomba de combustible"
+    ],
+    "Bomba de gasolina eléctrica": [
+      "Bomba de gasolina"
+    ],
+    "Bomba de combustible interna": [
+      "Bomba de combustible"
+    ],
+    "Bomba de combustible interna con filtro": [
+      "Bomba de combustible"
+    ],
+    "Suministro de combustible": [
+      "Bomba de combustible",
+      "Manguera",
+      "Llave de gasolina",
+      "Grifo de gasolina"
+    ],
+    "Bomba de combustible eléctrica interna": [
+      "Bomba de combustible"
+    ],
+    "Bomba de combustible eléctrica": [
+      "Bomba de combustible"
+    ],
+    "Bomba de gasolina eléctrica interna": [
+      "Bomba de gasolina"
+    ],
+    "Bomba de gasolina interna con filtro": [
+      "Bomba de gasolina"
+    ],
+    "Carburador para motor de motocicleta": [
+      "Carburador"
+    ],
+    "Tanque de gasolina": [
+      "Tanque de combustible"
+    ],
+    "Filtro de gasolina en línea": [
+      "Filtro de combustible"
+    ],
+    "Línea de combustible o vacío": [
+      "Manguera"
+    ],
+    "Línea de combustible": [
+      "Válvula"
+    ],
+    "Carburador": [
+      "Flotador"
+    ],
+    "Filtro de línea de combustible": [
+      "Filtro de combustible"
+    ],
+    "Filtro de combustible interno": [
+      "Filtro de combustible"
+    ],
+    "Filtrado de combustible": [
+      "Filtro de combustible"
+    ],
+    "Sistema de alimentación de combustible": [
+      "Carburador"
+    ],
+    "Carburador con diafragma": [
+      "Carburador"
+    ],
+    "Carburador para motor de combustión": [
+      "Carburador"
+    ],
+    "Válvula de paso de combustible": [
+      "Llave de gasolina"
+    ],
+    "Llave de gasolina con filtro integrado": [
+      "Llave de paso de combustible"
+    ]
+  },
+  "Arranque": {
+    "Pedal de arranque manual": [
+      "Pedal de arranque",
+      "Pedal"
+    ],
+    "Mecanismo de arranque": [
+      "Bendix",
+      "Engranaje de arranque"
+    ],
+    "Sistema de arranque eléctrico": [
+      "Bendix"
+    ],
+    "Bendix de arranque": [
+      "Bendix",
+      "Piñón de arranque"
+    ],
+    "Mecanismo de arranque eléctrico": [
+      "Bendix",
+      "Engranaje de arranque"
+    ],
+    "Engranaje Bendix de arranque": [
+      "Engranaje de arranque"
+    ],
+    "Bendix de motor de arranque": [
+      "Bendix"
+    ],
+    "Arranque manual": [
+      "Palanca de arranque",
+      "Pedal de arranque",
+      "Palanca"
+    ],
+    "Arranque eléctrico": [
+      "Porta piñón"
+    ],
+    "Piñón de arranque": [
+      "Piñón",
+      "Piñón de arranque",
+      "Bendix"
+    ],
+    "Palanca de arranque manual": [
+      "Palanca de arranque"
+    ],
+    "Piñón de arranque helicoidal": [
+      "Piñón"
+    ],
+    "Mecanismo de arranque manual": [
+      "Resorte"
+    ],
+    "Pedal de arranque": [
+      "Eje"
+    ],
+    "Resorte de retroceso para arranque manual": [
+      "Resorte de arranque"
+    ],
+    "Banda de arranque manual": [
+      "Banda de arranque"
+    ],
+    "Piñón loco de arranque": [
+      "Piñón"
+    ]
+  },
+  "Eléctrico": {
+    "Estator de encendido": [
+      "Bobinas de encendido",
+      "Bobina de encendido"
+    ],
+    "Encendido": [
+      "Bobinas de encendido",
+      "Estator",
+      "Separador de bobinas",
+      "Bobina de encendido",
+      "Módulo de encendido",
+      "Bobina de alta",
+      "Bobina",
+      "Bobina pulsora",
+      "Resistor",
+      "Switch de encendido",
+      "Interruptor de encendido",
+      "CDI",
+      "Switch de ignición",
+      "Unidad de control electrónico",
+      "Sensor",
+      "Extractor",
+      "Tapa",
+      "Cubre bujía",
+      "Copa de bujía",
+      "Capuchón de bujía",
+      "Conector de bujía",
+      "Cople de bujía",
+      "Terminal de bujía",
+      "Unidad Electrónica",
+      "Unidad de encendido",
+      "Unidad electrónica",
+      "Unidad de control",
+      "Módulo Electrónico",
+      "Estátor",
+      "Volante magnético",
+      "Unidad electrónica de ignición",
+      "Bobina y estator"
+    ],
+    "Generador de corriente / Sistema de carga": [
+      "Estator"
+    ],
+    "Generador de corriente / Estator": [
+      "Bobina de estator",
+      "Bobinas de estator",
+      "Estator"
+    ],
+    "Sistema de carga / Generador": [
+      "Estator"
+    ],
+    "Motor de arranque": [
+      "Inducido",
+      "Porta escobillas",
+      "Motor de arranque",
+      "Porta carbones",
+      "Escobillas de carbón"
+    ],
+    "Sensor de acelerador": [
+      "Sensor"
+    ],
+    "Sistema de inyección electrónica": [
+      "Sensor"
+    ],
+    "Control de luces y bocina": [
+      "Interruptores eléctricos"
+    ],
+    "Controles de manillar": [
+      "Interruptores"
+    ],
+    "Arranque eléctrico": [
+      "Motor de arranque"
+    ],
+    "Sistema de arranque": [
+      "Motor de arranque",
+      "Relay de arranque",
+      "Relé",
+      "Relay",
+      "Relé eléctrico",
+      "Relé de arranque",
+      "Relay eléctrico"
+    ],
+    "Iluminación de tablero o señalización": [
+      "Bombilla LED"
+    ],
+    "Iluminación delantera o trasera": [
+      "Bombilla"
+    ],
+    "Sistema de carga y luces": [
+      "Bobina"
+    ],
+    "Iluminación delantera": [
+      "Bombilla halógena",
+      "Bombillo halógeno",
+      "Portalámparas",
+      "Faro delantero",
+      "Farola delantera",
+      "Portalámpara",
+      "Porta bombillo",
+      "Porta bombilla",
+      "Bombilla",
+      "Bombilla LED",
+      "Foco delantero",
+      "Foco LED",
+      "Faro",
+      "Farol delantero",
+      "Luz direccional",
+      "Farola"
+    ],
+    "Iluminación de señalización": [
+      "Bombilla"
+    ],
+    "Iluminación frontal o trasera": [
+      "Bombilla LED",
+      "Foco LED"
+    ],
+    "Iluminación auxiliar y señalización": [
+      "Bombilla LED"
+    ],
+    "Iluminación": [
+      "Bombilla LED",
+      "Porta bombilla",
+      "Bombilla",
+      "Foco LED",
+      "Bobina"
+    ],
+    "Tablero de instrumentos": [
+      "Instrumental de tablero",
+      "Piloto luminoso",
+      "Soporte tablero"
+    ],
+    "Iluminación trasera": [
+      "Bombilla",
+      "Portalámparas",
+      "Luz trasera",
+      "Lente de luz trasera",
+      "Lente trasero",
+      "Direccional",
+      "Porta lámpara"
+    ],
+    "Instrumentación": [
+      "Tablero de instrumentos"
+    ],
+    "Iluminación auxiliar": [
+      "Faro auxiliar",
+      "Luz auxiliar",
+      "Luz estroboscópica",
+      "Luz auxiliar LED"
+    ],
+    "Iluminación trasera - luz de freno": [
+      "Bombilla"
+    ],
+    "Iluminación trasera - Luz de freno": [
+      "Portalámparas"
+    ],
+    "Luces intermitentes delanteras o traseras": [
+      "Intermitente"
+    ],
+    "Iluminación direccional": [
+      "Bombilla",
+      "Portalámparas",
+      "Bombillo"
+    ],
+    "Luces direccionales": [
+      "Direccional",
+      "Luz intermitente",
+      "Intermitente"
+    ],
+    "Luces intermitentes": [
+      "Intermitente",
+      "Señalero",
+      "Direccional"
+    ],
+    "Luces direccionales delanteras o traseras": [
+      "Direccional"
+    ],
+    "Señalización y luces": [
+      "Direccional"
+    ],
+    "Iluminación de tablero": [
+      "Bombilla"
+    ],
+    "Interruptor de freno trasero": [
+      "Interruptor",
+      "Interruptor de freno"
+    ],
+    "Sistema de carga": [
+      "Regulador de voltaje",
+      "Estator",
+      "Bobina",
+      "Bobina de estator",
+      "Regulador rectificador"
+    ],
+    "Velocímetro": [
+      "Sensor"
+    ],
+    "Regulación de carga": [
+      "Regulador de voltaje"
+    ],
+    "Sensor de velocidad de rueda": [
+      "Sensor"
+    ],
+    "Instrumentación digital": [
+      "Tablero de instrumentos"
+    ],
+    "Instrumentación y señalización": [
+      "Tablero de instrumentos"
+    ],
+    "Protección eléctrica": [
+      "Portafusible",
+      "Fusible",
+      "Caja de fusibles"
+    ],
+    "Iluminación trasera o señalización": [
+      "Bombilla",
+      "Bombilla LED"
+    ],
+    "Generador de corriente / Alternador": [
+      "Estator"
+    ],
+    "Arranque": [
+      "Motor eléctrico",
+      "Motor de arranque",
+      "Solenoide"
+    ],
+    "Sistema de encendido o arranque": [
+      "Relé"
+    ],
+    "Sistema de frenos": [
+      "Interruptor eléctrico",
+      "Interruptor"
+    ],
+    "Sistema de encendido o sistema eléctrico general": [
+      "Relé"
+    ],
+    "Control de motor": [
+      "ECU"
+    ],
+    "Sensor de velocidad para velocímetro": [
+      "Sensor de velocidad"
+    ],
+    "Motor de arranque / Triceta": [
+      "Resistencia eléctrica"
+    ],
+    "Sistema de freno": [
+      "Interruptor eléctrico"
+    ],
+    "Conectores y portabombillos": [
+      "Porta bombillo"
+    ],
+    "Sensor de freno trasero": [
+      "Sensor"
+    ],
+    "Encendido / Control electrónico": [
+      "Unidad electrónica"
+    ],
+    "Sistema de encendido o accesorios eléctricos": [
+      "Relé"
+    ],
+    "Sistema de encendido o luces": [
+      "Relé"
+    ],
+    "Relé de control eléctrico": [
+      "Relé"
+    ],
+    "Sensor de velocidad": [
+      "Sensor"
+    ],
+    "Cuadro de instrumentos digital": [
+      "Tablero digital"
+    ],
+    "Sistema de señalización acústica": [
+      "Bocina"
+    ],
+    "Sistema de freno trasero": [
+      "Interruptor"
+    ],
+    "Conectores eléctricos": [
+      "Terminal eléctrico"
+    ],
+    "Iluminación frontal": [
+      "Bombilla halógena"
+    ],
+    "Iluminación trasera o intermitente": [
+      "Bombilla LED"
+    ],
+    "Luz auxiliar / Luz direccional": [
+      "Luz LED"
+    ],
+    "Iluminación interna y señalización": [
+      "Bombilla LED"
+    ],
+    "Iluminación auxiliar o tablero": [
+      "Bombilla LED"
+    ],
+    "Iluminación, luz de posición o tablero": [
+      "Bombilla LED",
+      "Bombilla"
+    ],
+    "Iluminación tablero y señalización": [
+      "Bombilla LED"
+    ],
+    "Iluminación tablero o luces auxiliares": [
+      "Bombilla LED"
+    ],
+    "Iluminación de tablero y accesorios": [
+      "Bombilla LED"
+    ],
+    "Iluminación auxiliar y tablero": [
+      "Bombilla LED"
+    ],
+    "Iluminación tablero y accesorios": [
+      "Bombilla LED"
+    ],
+    "Iluminación, luz de señalización o tablero": [
+      "Bombilla LED"
+    ],
+    "Iluminación auxiliar o señalización": [
+      "Lámpara LED"
+    ],
+    "Conector de bombilla de faro": [
+      "Conector eléctrico"
+    ],
+    "Protección de circuitos eléctricos": [
+      "Fusible"
+    ],
+    "Señalización lateral": [
+      "Intermitente",
+      "Direccional"
+    ],
+    "Bocina eléctrica": [
+      "Bocina"
+    ],
+    "Instrumentación y medidores": [
+      "Tablero de instrumentos"
+    ],
+    "Instrumentación y panel de control": [
+      "Tablero de instrumentos"
+    ],
+    "Generador de corriente/Alternador": [
+      "Estator"
+    ],
+    "Relé de control": [
+      "Relé"
+    ],
+    "Luces direccionales delanteras y traseras": [
+      "Intermitente"
+    ],
+    "Relé de luces": [
+      "Relé"
+    ],
+    "Sensor de velocidad o sensor de revoluciones de rueda": [
+      "Sensor"
+    ],
+    "Luz de freno trasera": [
+      "Luz de freno"
+    ],
+    "Sistema de señalización y luces": [
+      "Relé intermitente"
+    ],
+    "Conectores y terminales": [
+      "Conector eléctrico"
+    ],
+    "Iluminación LED": [
+      "Regulador eléctrico"
+    ],
+    "Interruptor de luz de freno trasero": [
+      "Interruptor de freno"
+    ],
+    "Faro delantero con carenaje": [
+      "Óptico delantero"
+    ],
+    "Luces": [
+      "Iluminación"
+    ],
+    "Sistema de encendido": [
+      "Extractor"
+    ],
+    "Sensor de temperatura": [
+      "Sensor"
+    ],
+    "Sujeción de batería": [
+      "Correa",
+      "Correa de sujeción"
+    ],
+    "Soporte y fijación de batería": [
+      "Soporte de batería"
+    ],
+    "Control de aceleración": [
+      "Puño acelerador"
+    ],
+    "Faro delantero": [
+      "Sello de faro",
+      "Cubierta de goma"
+    ],
+    "Protección de terminales o válvulas": [
+      "Tapón protector"
+    ],
+    "Aislante de cableado o varilla": [
+      "Buje de goma"
+    ],
+    "Bocina": [
+      "Bocina"
+    ],
+    "Protección de cables": [
+      "Pasacables"
+    ],
+    "Protección de cables y mangueras": [
+      "Protector de cable"
+    ],
+    "Sistema de señalización": [
+      "Direccional",
+      "Intermitente",
+      "Luz direccional",
+      "Relé intermitente"
+    ],
+    "Señalización de giro": [
+      "Direccional"
+    ],
+    "Sistema de señalización o intermitentes": [
+      "Direccional"
+    ],
+    "Señalización/Intermitentes": [
+      "Intermitente"
+    ],
+    "Señalizador de giro": [
+      "Intermitente"
+    ],
+    "Señalización": [
+      "Direccional"
+    ],
+    "Sistema de iluminación trasera": [
+      "Interruptor eléctrico"
+    ],
+    "Luces intermitentes traseras": [
+      "Intermitente"
+    ],
+    "Sujeción de cables o mangueras": [
+      "Soporte de goma"
+    ],
+    "Señalización/Intermitente": [
+      "Direccional"
+    ],
+    "Luces direccionales delanteras": [
+      "Direccional"
+    ],
+    "Luces traseras y señalización": [
+      "Luz direccional"
+    ],
+    "Claxon o bocina": [
+      "Bocina"
+    ],
+    "Batería": [
+      "Tapa de batería"
+    ],
+    "Bocina eléctrica 12V": [
+      "Bocina"
+    ],
+    "Caja de batería": [
+      "Tapa de batería"
+    ],
+    "Conexión de arnés eléctrico": [
+      "Conector eléctrico"
+    ],
+    "Sistema de enfriamiento": [
+      "Resistencia eléctrica"
+    ],
+    "Sistema de ventilación o refrigeración": [
+      "Resistencia eléctrica"
+    ],
+    "Regulador de voltaje": [
+      "Disipador de calor"
+    ],
+    "Sistema de luces intermitentes": [
+      "Relé intermitente",
+      "Relé eléctrico"
+    ],
+    "Encendido eléctrico": [
+      "Retenedor"
+    ],
+    "Volante magnético": [
+      "Carcaza de volante"
+    ],
+    "Interruptores de manillar derecho": [
+      "Comando de manillar"
+    ],
+    "Interruptores de manillar": [
+      "Comando de manillar"
+    ],
+    "Control de claxon": [
+      "Interruptor"
+    ],
+    "Sistema de arranque eléctrico": [
+      "Interruptor",
+      "Relé"
+    ],
+    "Sistema de sonido y alerta": [
+      "Bocina"
+    ],
+    "Sistema de luces y carga": [
+      "Bobina"
+    ],
+    "Sistema de iluminación": [
+      "Bobina"
+    ],
+    "Luces y carga": [
+      "Bobina"
+    ],
+    "Sensor de posición del motor": [
+      "Sensor"
+    ],
+    "Sistema de intermitentes": [
+      "Relé intermitente"
+    ],
+    "Comando de arranque y luces": [
+      "Comando de manillar"
+    ],
+    "Comando de luces y bocina izquierdo": [
+      "Comando de luces y bocina"
+    ],
+    "Sistema de señalización intermitente": [
+      "Relé eléctrico"
+    ],
+    "Indicador de cambios": [
+      "Sensor"
+    ],
+    "Cableado principal": [
+      "Ramal eléctrico"
+    ],
+    "Comando de luces y encendido": [
+      "Comando de luces y arranque"
+    ],
+    "Control de luces y señalización": [
+      "Comando de luces"
+    ],
+    "Luces traseras con stop y direccionales": [
+      "Luz trasera"
+    ],
+    "Regulación de corriente": [
+      "Regulador de voltaje"
+    ],
+    "Comando de luces y arranque": [
+      "Comando de manillar"
+    ],
+    "Comando de luces y direccionales": [
+      "Comando de luces"
+    ],
+    "Encendido y generación": [
+      "Bobina de encendido y generación",
+      "Bobina de encendido",
+      "Bobina de encendido y estator"
+    ],
+    "Encendido electrónico": [
+      "Bobina de encendido"
+    ],
+    "Estátor y bobinas de encendido": [
+      "Bobina de encendido"
+    ],
+    "Estátor y bobina de encendido": [
+      "Bobina de encendido"
+    ],
+    "Encendido digital": [
+      "Bobina de encendido"
+    ],
+    "Encendido y generación de corriente": [
+      "Bobina de encendido y generación"
+    ]
+  },
+  "Carrocería": {
+    "Guardafango delantero": [
+      "Guardafango"
+    ],
+    "Emblema y decoración frontal": [
+      "Emblema frontal"
+    ],
+    "Tanque de combustible": [
+      "Carrocería",
+      "Tapa de combustible",
+      "Tapa de tanque",
+      "Tapón de combustible"
+    ],
+    "Guardabarros delantero": [
+      "Guardabarros"
+    ],
+    "Guardabarro delantero": [
+      "Guardabarro"
+    ],
+    "Guardabarros trasero interno": [
+      "Guardabarros"
+    ],
+    "Guardabarros delantero interno": [
+      "Guardabarros"
+    ],
+    "Guardabarros trasero": [
+      "Guardabarros"
+    ],
+    "Guardabarro trasero": [
+      "Guardabarro"
+    ],
+    "Tanque de gasolina": [
+      "Tanque de combustible"
+    ],
+    "Montaje y fijación": [
+      "Separador"
+    ],
+    "Protección lateral de motor": [
+      "Protector de motor"
+    ],
+    "Depósito de combustible": [
+      "Tapón"
+    ],
+    "Protección y sellado": [
+      "Tapón de goma"
+    ],
+    "Aislador de vibraciones": [
+      "Tope de goma"
+    ],
+    "Asiento": [
+      "Tirante de asiento",
+      "Espuma de asiento",
+      "Sillín"
+    ],
+    "Faro delantero": [
+      "Cubierta de faro"
+    ],
+    "Tapones protectores": [
+      "Tapón de goma"
+    ],
+    "Cubiertas y protecciones": [
+      "Tapón de goma",
+      "Tapón"
+    ],
+    "Accesorios y cubiertas": [
+      "Tapón de goma"
+    ],
+    "Retrovisor lateral": [
+      "Retrovisor"
+    ],
+    "Tapa de tanque de gasolina": [
+      "Tapa de combustible"
+    ],
+    "Asiento para conductor": [
+      "Asiento"
+    ],
+    "Soporte de farola": [
+      "Soporte metálico"
+    ],
+    "Soporte de farola delantera": [
+      "Soporte metálico"
+    ],
+    "Asiento y respaldo": [
+      "Cojín de respaldo"
+    ],
+    "Asiento principal": [
+      "Asiento"
+    ],
+    "Carenado lateral derecho": [
+      "Carenado lateral"
+    ],
+    "Carenado lateral izquierdo": [
+      "Carenado lateral"
+    ],
+    "Cubierta de asiento trasero": [
+      "Carrocería"
+    ],
+    "Cubierta inferior de asiento trasero": [
+      "Carrocería trasera"
+    ],
+    "Cola o cubierta trasera de asiento": [
+      "Carrocería trasera"
+    ],
+    "Cola de sillín trasera": [
+      "Carrocería trasera"
+    ],
+    "Cola o cubierta trasera del sillín": [
+      "Carrocería trasera"
+    ],
+    "Cola trasera": [
+      "Carrocería"
+    ],
+    "Carcasa trasera de asiento": [
+      "Carcasa de asiento"
+    ],
+    "Emblema frontal": [
+      "Emblema"
+    ],
+    "Emblema de tanque": [
+      "Emblema"
+    ],
+    "Guardafango trasero": [
+      "Guardafango"
+    ]
+  },
+  "Velocímetro": {
+    "Transmisión de señal velocímetro": [
+      "Piñón"
+    ],
+    "Transmisión de señal de velocidad": [
+      "Piñón",
+      "Piñón velocímetro",
+      "Piñón de velocímetro"
+    ],
+    "Transmisión de velocidad": [
+      "Piñón de velocímetro",
+      "Engranaje"
+    ],
+    "Impulsor de velocímetro trasero": [
+      "Impulsor"
+    ]
+  },
+  "Instrumentación": {
+    "Velocímetro": [
+      "Piñón velocímetro",
+      "Piñón de velocímetro",
+      "Cable de velocímetro",
+      "Impulsor de velocímetro",
+      "Cable",
+      "Sensor de velocidad"
+    ],
+    "Panel de indicadores y tacómetro": [
+      "Cuadro de instrumentos"
+    ],
+    "Panel de indicadores": [
+      "Tablero de instrumentos",
+      "Velocímetro y tacómetro",
+      "Velocímetro"
+    ],
+    "Velocímetro y panel de luces testigo": [
+      "Velocímetro"
+    ],
+    "Tablero de instrumentos": [
+      "Velocímetro",
+      "Velocímetro y medidor de combustible"
+    ],
+    "Panel de velocímetro y testigos": [
+      "Velocímetro"
+    ],
+    "Velocímetro y odómetro": [
+      "Velocímetro"
+    ],
+    "Velocímetro y tacómetro con indicadores de combustible y luces testigo": [
+      "Tablero de instrumentos"
+    ],
+    "Velocímetro y luces testigo": [
+      "Tablero de instrumentos"
+    ],
+    "Panel de velocímetro y medidores": [
+      "Velocímetro"
+    ],
+    "Panel de velocímetro y medidor de combustible": [
+      "Velocímetro"
+    ],
+    "Velocímetro y tacómetro combinado": [
+      "Tablero de instrumentos"
+    ],
+    "Tablero de instrumentos digital": [
+      "Velocímetro"
+    ],
+    "Panel de instrumentos digital y analógico": [
+      "Velocímetro"
+    ],
+    "Velocímetro y tacómetro": [
+      "Tablero de instrumentos",
+      "Instrumentos de tablero",
+      "Instrumento de medición"
+    ],
+    "Tablero de velocímetro y tacómetro": [
+      "Tablero de instrumentos"
+    ],
+    "Tablero de velocidad e indicadores": [
+      "Velocímetro"
+    ],
+    "Velocímetro y tacómetro combinado con medidor de combustible e indicadores luminosos": [
+      "Tablero de instrumentos"
+    ],
+    "Panel de instrumentos": [
+      "Velocímetro"
+    ],
+    "Panel de velocímetro y luces testigo": [
+      "Velocímetro"
+    ],
+    "Tacómetro": [
+      "Engranaje"
+    ],
+    "Velocímetro mecánico": [
+      "Velocímetro",
+      "Engranaje de velocímetro"
+    ],
+    "Velocímetro y medidor de combustible": [
+      "Tablero de instrumentos"
+    ],
+    "Tablero combinado tacómetro y display digital": [
+      "Tablero de instrumentos"
+    ]
+  },
+  "Accesorios": {
+    "Espejo retrovisor lateral": [
+      "Espejo retrovisor"
+    ],
+    "Espejo lateral": [
+      "Espejo retrovisor"
+    ],
+    "Espejos retrovisores laterales": [
+      "Espejo retrovisor",
+      "Retrovisor"
+    ],
+    "Retrovisor lateral": [
+      "Retrovisor"
+    ],
+    "Retrovisor lateral derecho": [
+      "Retrovisor"
+    ],
+    "Soporte lateral": [
+      "Pata de cabra",
+      "Pata lateral"
+    ],
+    "Reposapiés trasero": [
+      "Reposapiés"
+    ],
+    "Reposapiés delantero": [
+      "Reposapiés"
+    ],
+    "Caballete lateral": [
+      "Caballete lateral",
+      "Tope de goma"
+    ],
+    "Reposapiés delantero o trasero": [
+      "Reposapiés"
+    ],
+    "Pedal de freno o cambio": [
+      "Pedal de goma",
+      "Pedal",
+      "Cubre pedal"
+    ],
+    "Pata de cabra lateral": [
+      "Soporte lateral",
+      "Pata de cabra"
+    ],
+    "Caballete central": [
+      "Caballete central"
+    ],
+    "Pedal de reposapiés": [
+      "Pedal"
+    ],
+    "Soporte de espejo retrovisor": [
+      "Soporte de espejo"
+    ],
+    "Herramientas de mantenimiento": [
+      "Herramienta"
+    ],
+    "Reposapié trasero o delantero": [
+      "Reposapié"
+    ],
+    "Pedal de apoyo o pedal de freno": [
+      "Pedal"
+    ],
+    "Pedal de cambio o freno": [
+      "Goma de pedal"
+    ],
+    "Parrilla trasera": [
+      "Red de carga"
+    ],
+    "Sujeción y amarre": [
+      "Cuerda elástica"
+    ],
+    "Estribo para pie": [
+      "Estribo"
+    ],
+    "Sujeción de carga trasera": [
+      "Accesorio de carga"
+    ],
+    "Sujeción y carga": [
+      "Cuerda elástica"
+    ],
+    "Almacenamiento": [
+      "Caja porta herramientas"
+    ],
+    "Reposapiés laterales": [
+      "Reposapié"
+    ],
+    "Pedales": [
+      "Cubierta de pedal"
+    ],
+    "Pedales de motocicleta": [
+      "Cubierta de pedal"
+    ],
+    "Soporte trasero para mantenimiento": [
+      "Soporte de mantenimiento"
+    ],
+    "Elevador hidráulico para mantenimiento": [
+      "Elevador"
+    ],
+    "Kit de herramientas de mantenimiento": [
+      "Kit de herramientas"
+    ],
+    "Kit de mantenimiento": [
+      "Kit de herramientas"
+    ],
+    "Soporte de espejo lateral": [
+      "Soporte de espejo"
+    ]
+  },
+  "Instrumental": {
+    "Velocímetro y tacómetro combinado": [
+      "Instrumento de medición"
+    ],
+    "Tablero de instrumentos": [
+      "Velocímetro"
+    ],
+    "Panel de instrumentos": [
+      "Velocímetro y tacómetro"
+    ],
+    "Panel de velocímetro con testigos": [
+      "Velocímetro"
+    ]
+  },
+  "Instrumentos": {
+    "Velocímetro analógico con odómetro": [
+      "Velocímetro"
+    ],
+    "Tablero de instrumentos": [
+      "Velocímetro"
+    ],
+    "Velocímetro": [
+      "Cable",
+      "Engranaje",
+      "Engranaje velocímetro"
+    ]
+  },
+  "Hidráulico": {
+    "Lubricación": [
+      "Aceite Hidráulico"
+    ]
+  },
+  "Iluminación": {
+    "Luces direccionales delanteras o traseras": [
+      "Direccional",
+      "Intermitente"
+    ],
+    "Direccionales delanteras o traseras": [
+      "Direccional"
+    ],
+    "Luz direccional/intermitente": [
+      "Direccional"
+    ],
+    "Faro delantero con luz halógena y LED": [
+      "Faro delantero"
+    ],
+    "Luz trasera / Stop": [
+      "Luz trasera"
+    ],
+    "Luces direccionales": [
+      "Direccional",
+      "Intermitente"
+    ],
+    "Luz direccional delantera o trasera": [
+      "Direccional",
+      "Intermitente"
+    ],
+    "Faro delantero completo con carenaje": [
+      "Faro delantero"
+    ],
+    "Luces intermitentes traseras": [
+      "Intermitente"
+    ],
+    "Faro delantero": [
+      "Faro delantero con carenaje",
+      "Bombilla halógena",
+      "Bombilla LED",
+      "Bombillo LED",
+      "Foco LED",
+      "Faro"
+    ],
+    "Farola delantera completa con carenaje": [
+      "Farola delantera"
+    ],
+    "Direccional delantera": [
+      "Direccional"
+    ],
+    "Faro delantero con carenaje": [
+      "Faro delantero",
+      "Optica delantera"
+    ],
+    "Direccionales delanteras": [
+      "Direccional"
+    ],
+    "Farola delantera": [
+      "Farola"
+    ],
+    "Intermitente": [
+      "Luz direccional",
+      "Luz intermitente"
+    ],
+    "Faro delantero LED": [
+      "Foco LED",
+      "Foco delantero",
+      "Faro delantero"
+    ],
+    "Luz trasera LED": [
+      "Luz trasera"
+    ],
+    "Foco delantero LED": [
+      "Foco delantero"
+    ],
+    "Foco delantero LED H4": [
+      "Foco delantero"
+    ],
+    "Faro auxiliar LED con lente lupa": [
+      "Faro auxiliar"
+    ],
+    "Faros auxiliares LED con ventilador": [
+      "Luz LED con lente lupa"
+    ],
+    "Foco delantero o trasero": [
+      "Foco LED"
+    ],
+    "Faro auxiliar delantero": [
+      "Faro auxiliar"
+    ],
+    "Faro trasero con luz de freno y posición": [
+      "Faro trasero"
+    ],
+    "Faro delantero principal": [
+      "Faro delantero"
+    ],
+    "Intermitente delantero y trasero": [
+      "Direccional"
+    ],
+    "Luz de freno trasera": [
+      "Luz trasera"
+    ],
+    "Intermitente trasero": [
+      "Intermitente"
+    ],
+    "Farola delantera con intermitentes": [
+      "Farola delantera"
+    ],
+    "Faros delanteros": [
+      "Farola delantera"
+    ],
+    "Luz trasera con reflector": [
+      "Luz trasera"
+    ],
+    "Luz trasera de freno": [
+      "Lente trasero"
+    ],
+    "Luz trasera de freno y posición": [
+      "Lente trasero"
+    ],
+    "Luz trasera": [
+      "Faro trasero",
+      "Calavera"
+    ],
+    "Luz trasera y de freno": [
+      "Faro trasero"
+    ],
+    "Direccional delantero": [
+      "Faro direccional"
+    ],
+    "Luz direccional delantera": [
+      "Luz direccional"
+    ],
+    "Direccional trasera": [
+      "Direccional"
+    ],
+    "Intermitente delantero o trasero": [
+      "Direccional"
+    ],
+    "Farol delantero": [
+      "Farol"
+    ],
+    "Faro trasero completo": [
+      "Faro trasero"
+    ],
+    "Farola delantera doble": [
+      "Farola"
+    ]
+  },
+  "Control de motor": {
+    "Acelerador": [
+      "Puño acelerador",
+      "Guaya de acelerador"
+    ]
+  },
+  "Admisión": {
+    "Filtro de aire del motor": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire": [
+      "Filtro de aire",
+      "Manga de goma"
+    ],
+    "Filtro de aire para carter": [
+      "Filtro de aire"
+    ],
+    "Soporte de filtro de aire": [
+      "Filtro de aire"
+    ],
+    "Conexión carburador-filtro de aire": [
+      "Conector de goma"
+    ],
+    "Filtro de aire de espuma": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire completo con base": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire de espuma para motor": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire para motor": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire de admisión": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire cónico": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire para carburador": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire con caja y conducto": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire motor": [
+      "Filtro de aire"
+    ],
+    "Filtro de aire con caja": [
+      "Filtro de aire"
+    ],
+    "Caja de filtro de aire": [
+      "Filtro de aire"
+    ]
+  },
+  "Ruedas": {
+    "Rueda trasera o delantera": [
+      "Radio de rueda"
+    ],
+    "Rueda delantera": [
+      "Radios de rueda"
+    ],
+    "Buje trasero": [
+      "Buje"
+    ],
+    "Rueda con radios": [
+      "Radio de rueda"
+    ],
+    "Rayo de rueda trasera o delantera": [
+      "Rayo de rueda"
+    ],
+    "Rin y radios": [
+      "Rayos y nipples",
+      "Radios de rueda"
+    ],
+    "Rin con radios": [
+      "Radios de rueda"
+    ],
+    "Rueda trasera": [
+      "Rayos de rueda",
+      "Radios de rueda"
+    ],
+    "Rayo y niples para rueda": [
+      "Rayo de rueda"
+    ],
+    "Radio de rueda trasera o delantera": [
+      "Radio"
+    ],
+    "Radio y nipples para rueda": [
+      "Radio de rueda"
+    ],
+    "Eje trasero": [
+      "Herramienta de mantenimiento",
+      "Herramienta"
+    ],
+    "Montaje y desmontaje de ruedas": [
+      "Herramienta"
+    ],
+    "Accesorios para rueda trasera": [
+      "Herramienta"
+    ],
+    "Desmontaje de neumáticos": [
+      "Herramienta de desmontaje"
+    ],
+    "Buje de rueda": [
+      "Cubierta de buje"
+    ],
+    "Válvula de neumático": [
+      "Tapón"
+    ],
+    "Herramienta para cambio de neumáticos": [
+      "Palanca de neumático"
+    ],
+    "Herramientas para cambio de neumáticos": [
+      "Palanca de neumáticos"
+    ],
+    "Neumático interior": [
+      "Cámara de aire"
+    ]
+  },
+  "Dirección": {
+    "Control de manillar y cables": [
+      "Abrazadera de manillar"
+    ],
+    "Soporte de manillar para cable de freno o acelerador": [
+      "Abrazadera de manillar"
+    ],
+    "Rodamiento de dirección": [
+      "Rodamiento"
+    ],
+    "Montura de manillar": [
+      "Soporte de manillar"
+    ],
+    "Soporte de espejo retrovisor": [
+      "Soporte de espejo"
+    ],
+    "Soporte manillar derecho": [
+      "Soporte manillar"
+    ],
+    "Manillar": [
+      "Soporte de manillar",
+      "Soporte manillar",
+      "Puños",
+      "Puños de manillar",
+      "Puño de manillar",
+      "Separador",
+      "Espaciador",
+      "Protector de manillar",
+      "Abrazadera",
+      "Buje",
+      "Accesorio de manillar",
+      "Buje de goma",
+      "Tope de goma",
+      "Puño",
+      "Tope antivibración"
+    ],
+    "Soporte de manubrio": [
+      "Abrazadera de manubrio"
+    ],
+    "Soporte de manillar derecho": [
+      "Soporte de manillar"
+    ],
+    "Soporte manubrio izquierdo": [
+      "Soporte de manubrio"
+    ],
+    "Rodamientos de dirección": [
+      "Rodamientos de dirección"
+    ],
+    "Kit de dirección": [
+      "Rodamiento de dirección"
+    ],
+    "Espigo de dirección": [
+      "Extractor de cuñas"
+    ],
+    "Pedal de freno o cambio": [
+      "Pedal"
+    ],
+    "Mango acelerador": [
+      "Puño acelerador"
+    ],
+    "Control de aceleración": [
+      "Puño acelerador",
+      "Puño de acelerador"
+    ],
+    "Puño de acelerador": [
+      "Puño acelerador",
+      "Puño de acelerador",
+      "Puño"
+    ],
+    "Control de acelerador": [
+      "Puño",
+      "Soporte de cable"
+    ],
+    "Retén de horquilla": [
+      "Retén"
+    ],
+    "Pedal de freno o pedal de cambio": [
+      "Pedal"
+    ],
+    "Soporte manubrio delantero": [
+      "Soporte manubrio"
+    ],
+    "Puño de acelerador derecho": [
+      "Puño de acelerador"
+    ],
+    "Manillar y controles": [
+      "Puño de acelerador"
+    ],
+    "Reposapié delantero": [
+      "Reposapié"
+    ],
+    "Reposapiés laterales": [
+      "Reposapié"
+    ],
+    "Amortiguador de vibraciones manillar": [
+      "Amortiguador"
+    ],
+    "Abrazadera de manillar superior": [
+      "Abrazadera de manillar"
+    ],
+    "Soporte de manigueta": [
+      "Base de manigueta"
+    ],
+    "Manigueta de freno o embrague": [
+      "Base de manigueta"
+    ],
+    "Manigueta": [
+      "Soporte de manigueta"
+    ],
+    "Accesorios de manubrio": [
+      "Tapón de manubrio"
+    ],
+    "Cuna de dirección": [
+      "Rodamiento de dirección"
+    ],
+    "Horquilla inferior": [
+      "Horquilla de dirección"
+    ],
+    "Manubrio estándar": [
+      "Manubrio"
+    ]
+  },
+  "Control": {
+    "Manija de embrague izquierda": [
+      "Manija de embrague"
+    ],
+    "Palanca de embrague del manillar": [
+      "Palanca de embrague"
+    ],
+    "Manija de embrague": [
+      "Manija"
+    ],
+    "Acelerador": [
+      "Cable",
+      "Cable de acelerador",
+      "Puño acelerador",
+      "Puño",
+      "Guaya"
+    ],
+    "Cable de acelerador": [
+      "Guía de cable"
+    ],
+    "Cable de acelerador o freno": [
+      "Tope de goma"
+    ],
+    "Guaya de emergencia": [
+      "Guaya"
+    ]
+  },
+  "Sistema eléctrico": {
+    "Protección eléctrica": [
+      "Fusible"
+    ]
+  },
+  "Estructura": {
+    "Fijación general": [
+      "Tornillo",
+      "Perno"
+    ]
+  },
+  "Encendido": {
+    "Volante magnético": [
+      "Extractor"
+    ],
+    "Bujía estándar": [
+      "Bujía"
+    ]
+  },
+  "Mantenimiento": {
+    "Herramientas de ajuste": [
+      "Herramienta"
+    ],
+    "Herramientas para motor": [
+      "Herramienta"
+    ],
+    "Herramientas de taller": [
+      "Herramienta"
+    ],
+    "Llave de bujía": [
+      "Herramienta"
+    ],
+    "Extracción de rodamientos": [
+      "Herramienta"
+    ],
+    "Llave para bujía": [
+      "Herramienta"
+    ],
+    "Herramientas de reparación": [
+      "Herramientas manuales"
+    ],
+    "Limpieza de cadena": [
+      "Herramienta de limpieza"
+    ]
+  },
+  "Escape": {
+    "Adaptador de tubo de escape": [
+      "Conector de escape"
+    ],
+    "Conexión de tubo de escape": [
+      "Conector de escape"
+    ],
+    "Soporte de escape": [
+      "Tope de goma"
+    ],
+    "Adaptador de escape": [
+      "Brida de escape"
+    ],
+    "Silenciador trasero": [
+      "Escape"
+    ],
+    "Mofle completo": [
+      "Escape"
+    ]
+  },
+  "Control de mando": {
+    "Acelerador": [
+      "Puño"
+    ]
+  },
+  "Control de velocidad": {
+    "Acelerador": [
+      "Puño acelerador"
+    ]
+  },
+  "Control de aceleración": {
+    "Mango acelerador": [
+      "Puño acelerador"
+    ],
+    "Puño de acelerador": [
+      "Puño acelerador"
+    ]
+  },
+  "Sistema de combustible": {
+    "Conexión de mangueras": [
+      "Conector"
+    ]
+  },
+  "Aceleración": {
+    "Cable de acelerador": [
+      "Polea"
+    ]
+  },
+  "Refrigeración": {
+    "Bomba de agua": [
+      "Sellos y polea de bomba de agua",
+      "Retenedores y sello mecánico"
+    ],
+    "Bomba de agua motorizada": [
+      "Bomba de agua"
+    ],
+    "Radiador de motor": [
+      "Radiador"
+    ],
+    "Ventilador de radiador": [
+      "Ventilador"
+    ],
+    "Ventilador de radiador eléctrico": [
+      "Ventilador de radiador"
+    ],
+    "Bomba de agua para motocarguero": [
+      "Bomba de agua"
+    ]
+  },
+  "Frenos / Embrague": {
+    "Palanca de freno o embrague delantero": [
+      "Manigueta"
+    ]
+  },
+  "Frenos/Embrague": {
+    "Palanca de freno o embrague delantero": [
+      "Manigueta"
+    ]
+  },
+  "Estructural": {
+    "Fijación general": [
+      "Tornillo"
+    ],
+    "Sujeción general": [
+      "Tornillo"
+    ]
+  }
+}
