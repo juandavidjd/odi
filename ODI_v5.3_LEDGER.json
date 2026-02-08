@@ -1,0 +1,359 @@
+{
+  "name": "ODI_v5.3_LEDGER",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Ingest",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 400],
+      "webhookId": "odi-ingest"
+    },
+    {
+      "parameters": {
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "WA Verify",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 200],
+      "webhookId": "odi-wa-verify"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.query['hub.verify_token'] }}",
+              "value2": "odi_whatsapp_verify_2026"
+            }
+          ]
+        }
+      },
+      "name": "Token OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "Challenge OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 120]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Forbidden",
+        "options": { "responseCode": 403 }
+      },
+      "name": "Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI NORMALIZER v5.3 LEDGER\n// ═══════════════════════════════════════════════════════════\nconst input = $json.body || $json;\n\nif (input.entry && input.entry[0] && input.entry[0].changes) {\n  const value = input.entry[0].changes[0] ? input.entry[0].changes[0].value : null;\n  if (!value || !value.messages || !value.messages[0]) {\n    return [{ json: { ignore: true, reason: 'status_update' } }];\n  }\n  const msg = value.messages[0];\n  const contact = value.contacts ? value.contacts[0] : null;\n  let text = '';\n  if (msg.type === 'text' && msg.text) text = msg.text.body || '';\n  else if (msg.type === 'button' && msg.button) text = msg.button.text || '';\n  else if (msg.type === 'interactive' && msg.interactive) {\n    if (msg.interactive.button_reply) text = msg.interactive.button_reply.title || '';\n    else if (msg.interactive.list_reply) text = msg.interactive.list_reply.title || '';\n  }\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: 'whatsapp',\n      from: msg.from,\n      phone_number_id: value.metadata ? value.metadata.phone_number_id : '',\n      message_id: msg.id,\n      text: text,\n      contact_name: contact && contact.profile ? contact.profile.name : 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nif (input.text) {\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: input.canal || 'api',\n      from: input.user_id || 'anonymous',\n      text: input.text,\n      contact_name: input.contact_name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nreturn [{ json: { ignore: true, reason: 'unknown_format' } }];"
+      },
+      "name": "Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ignore }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Ignorar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ignored\"}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI INTENT CLASSIFIER v5.3 LEDGER\n// ═══════════════════════════════════════════════════════════\nconst text = ($json.text || '').toLowerCase();\nlet goToFitment = false;\nlet intent = 'GENERAL';\nlet entities = {};\n\nconst marcas = ['yamaha', 'honda', 'suzuki', 'kawasaki', 'bajaj', 'pulsar', 'ktm', 'tvs', 'akt', 'hero', 'auteco', 'victory', 'kymco', 'sym', 'piaggio', 'vespa', 'benelli', 'royal enfield', 'cfmoto', 'zontes'];\nfor (const m of marcas) {\n  if (text.includes(m)) { entities.marca = m.toUpperCase(); break; }\n}\n\nconst modelos = ['fz', 'mt', 'r15', 'r3', 'r6', 'r1', 'nmax', 'bws', 'xtz', 'ybr', 'fazer', 'crypton', 'cb', 'cbr', 'crf', 'xr', 'xl', 'cg', 'titan', 'fan', 'ninja', 'z', 'versys', 'duke', 'rc', 'dominar', 'ns', 'rs', 'as', 'discover', 'boxer', 'platino', 'ct100', 'gixxer', 'gsxr', 'vstrom', 'intruder', 'agility', 'twist', 'jet', 'like', 'fly', 'liberty', 'medley'];\nfor (const m of modelos) {\n  if (text.includes(m)) { entities.modelo = m.toUpperCase(); break; }\n}\n\nconst year = text.match(/(20[0-2][0-9]|19[89][0-9])/);\nif (year) entities.year = year[0];\n\nconst cc = text.match(/(\\d{2,4})\\s*cc/);\nif (cc) entities.cilindraje = cc[1];\n\nconst repuestos = ['pastilla', 'freno', 'filtro', 'aceite', 'cadena', 'piñon', 'piñones', 'kit', 'llanta', 'rin', 'bateria', 'faro', 'farola', 'stop', 'direccional', 'espejo', 'retrovisor', 'manigueta', 'manillar', 'cable', 'guaya', 'clutch', 'embrague', 'suspension', 'amortiguador', 'rodamiento', 'balinera', 'retenedor', 'empaque', 'junta', 'piston', 'biela', 'cigueñal', 'cilindro', 'carburador', 'inyector', 'bomba', 'radiador', 'termostato', 'bujia', 'bobina', 'cdi', 'regulador', 'estator', 'relay', 'fusible', 'corona', 'sproket', 'tensor', 'balancin', 'valvula', 'arbol', 'leva'];\nfor (const r of repuestos) {\n  if (text.includes(r)) { entities.repuesto = r; break; }\n}\n\nif (entities.repuesto || entities.marca || entities.modelo || entities.cilindraje) {\n  goToFitment = true;\n  intent = 'FITMENT';\n} else if (text.match(/^(hola|buenos|buenas|hi|hey|ola|saludos|buena)/)) {\n  intent = 'SALUDO';\n} else if (text.includes('precio') || text.includes('cuanto') || text.includes('vale') || text.includes('cuesta')) {\n  intent = 'PRECIO';\n} else if (text.includes('comprar') || text.includes('quiero') || text.includes('necesito') || text.includes('llevo') || text.includes('pedir')) {\n  intent = 'COMPRA';\n} else if (text.includes('pedido') || text.includes('orden') || text.includes('envio') || text.includes('tracking') || text.includes('donde esta') || text.includes('llega')) {\n  intent = 'ESTADO_PEDIDO';\n} else if (text.includes('ayuda') || text.includes('problema') || text.includes('soporte') || text.includes('reclamo') || text.includes('devolucion') || text.includes('garantia')) {\n  intent = 'SOPORTE';\n}\n\nreturn [{ json: { ...$json, intent: intent, entities: entities, goToFitment: goToFitment } }];"
+      },
+      "name": "Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI CES EVALUATOR v5.3\n// ═══════════════════════════════════════════════════════════\nconst intent = $json.intent;\nconst amount = parseFloat($json.amount) || 0;\n\nlet ces = { action: 'PROCEED', risk: 'LOW' };\n\nif (intent === 'COMPRA' && amount > 200000) {\n  ces = { action: 'AWAIT_HUMAN', risk: 'HIGH', reason: 'Monto supera umbral' };\n}\n\nreturn [{ json: { ...$json, ces: ces } }];"
+      },
+      "name": "CES",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1050, 480]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id,\n  event_type,\n  category,\n  user_id,\n  action_type,\n  target_type,\n  target_id,\n  risk_level,\n  metadata,\n  event_hash\n) VALUES (\n  $1,\n  'ACTION_STARTED',\n  'ACTION',\n  $2,\n  $3,\n  'message',\n  $4,\n  $5,\n  $6::jsonb,\n  encode(sha256(($1 || $2 || $4 || now()::text)::bytea), 'hex')\n) RETURNING event_id, sequence_num, created_at;",
+        "options": {
+          "queryReplacement": "={{ [$json.odi_event_id, $json.from, $json.intent, $json.message_id || $json.odi_event_id, $json.ces.risk.toLowerCase(), JSON.stringify({canal: $json.canal, text: $json.text.substring(0, 200), entities: $json.entities, ces_action: $json.ces.action, goToFitment: $json.goToFitment})] }}"
+        }
+      },
+      "name": "Ledger Ingest",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1250, 480],
+      "credentials": {
+        "postgres": {
+          "id": "odi-postgres",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pasar datos originales + sequence del Ledger\nconst original = $('CES').first().json;\nconst ledgerResult = $json;\n\nreturn [{\n  json: {\n    ...original,\n    ledger_sequence: ledgerResult.sequence_num || null,\n    ledger_created: ledgerResult.created_at || null\n  }\n}];"
+      },
+      "name": "Merge Ledger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1450, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.goToFitment }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Usar M6.2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1650, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://172.18.0.3:8802/fitment/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"q\": \"{{ $json.text }}\"}",
+        "options": { "timeout": 30000 }
+      },
+      "name": "Consultar M6.2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1850, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// FORMATEAR RESPUESTA M6.2\n// ═══════════════════════════════════════════════════════════\nconst fitment = $json;\nconst original = $('Merge Ledger').first().json;\nlet responseText = '';\nlet bestOption = null;\n\ntry {\n  if (fitment.status === 'success' && fitment.results_count > 0) {\n    const main = fitment.main_result;\n    bestOption = {\n      title: main.title,\n      price: main.price,\n      price_formatted: main.price_formatted,\n      compatibility: main.compatibility,\n      provider: main.client\n    };\n    \n    responseText = 'Encontre ' + fitment.results_count + ' opciones.\\n\\n';\n    responseText += 'MEJOR OPCION:\\n';\n    responseText += main.title + '\\n';\n    responseText += 'Precio: ' + main.price_formatted + '\\n';\n    responseText += 'Compatible: ' + main.compatibility + '\\n';\n    responseText += 'Proveedor: ' + main.client + '\\n\\n';\n    \n    if (fitment.results_count > 1) {\n      responseText += 'Hay ' + (fitment.results_count - 1) + ' opciones mas disponibles.';\n    }\n  } else {\n    responseText = 'No encontre resultados exactos. Dame mas detalles de tu moto (marca, modelo, año).';\n  }\n} catch (e) {\n  responseText = 'Hubo un error consultando. Intenta de nuevo.';\n}\n\nreturn [{\n  json: {\n    odi_event_id: original.odi_event_id,\n    canal: original.canal,\n    from: original.from,\n    phone_number_id: original.phone_number_id || '',\n    text: original.text,\n    contact_name: original.contact_name,\n    intent: original.intent,\n    entities: original.entities,\n    ces: original.ces,\n    ledger_sequence: original.ledger_sequence,\n    response_text: responseText,\n    fitment_query_id: fitment.query_id || null,\n    fitment_count: fitment.results_count || 0,\n    best_option: bestOption\n  }\n}];"
+      },
+      "name": "Formatear Fitment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [2050, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// RESPUESTA GENERAL\n// ═══════════════════════════════════════════════════════════\nconst input = $json;\nconst name = input.contact_name || '';\n\nconst responses = {\n  'SALUDO': 'Hola ' + name + '! Soy el asistente de SRM - Somos Repuestos Motos. En que puedo ayudarte?',\n  'PRECIO': 'Dime que repuesto necesitas y para que moto, y te doy el precio exacto.',\n  'COMPRA': 'Te ayudo con tu compra. Que producto necesitas?',\n  'ESTADO_PEDIDO': 'Dame el numero de orden para consultar el estado.',\n  'SOPORTE': 'Cuentame que problema tienes y te ayudo a resolverlo.',\n  'GENERAL': 'Gracias por escribir a SRM. Buscas algun repuesto? Dime marca y modelo de tu moto.'\n};\n\nconst responseText = responses[input.intent] || responses['GENERAL'];\n\nreturn [{\n  json: {\n    odi_event_id: input.odi_event_id,\n    canal: input.canal,\n    from: input.from,\n    phone_number_id: input.phone_number_id || '',\n    text: input.text,\n    contact_name: input.contact_name,\n    intent: input.intent,\n    entities: input.entities,\n    ces: input.ces,\n    ledger_sequence: input.ledger_sequence,\n    response_text: responseText,\n    fitment_query_id: null,\n    fitment_count: 0,\n    best_option: null\n  }\n}];"
+      },
+      "name": "Response General",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1850, 560]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id,\n  event_type,\n  category,\n  user_id,\n  action_type,\n  target_type,\n  target_id,\n  risk_level,\n  metadata,\n  event_hash\n) VALUES (\n  $1,\n  'ACTION_COMPLETED',\n  'ACTION',\n  $2,\n  'RESPONSE',\n  'fitment_result',\n  $3,\n  'low',\n  $4::jsonb,\n  encode(sha256(($1 || $2 || $3 || now()::text)::bytea), 'hex')\n) RETURNING sequence_num;",
+        "options": {
+          "queryReplacement": "={{ [$json.odi_event_id + '-R', $json.from, $json.fitment_query_id || $json.odi_event_id, JSON.stringify({intent: $json.intent, fitment_count: $json.fitment_count, best_option: $json.best_option, response_length: ($json.response_text || '').length})] }}"
+        }
+      },
+      "name": "Ledger Response",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [2250, 480],
+      "credentials": {
+        "postgres": {
+          "id": "odi-postgres",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recuperar datos de respuesta\nconst responseData = $('Formatear Fitment').first()?.json || $('Response General').first()?.json;\nconst ledgerSeq = $json.sequence_num;\n\nreturn [{\n  json: {\n    ...responseData,\n    ledger_response_seq: ledgerSeq\n  }\n}];"
+      },
+      "name": "Merge Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [2450, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.canal }}",
+              "value2": "whatsapp"
+            }
+          ]
+        }
+      },
+      "name": "Es WA",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2650, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/987256874463607/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.from }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_text }}\"}}",
+        "options": {}
+      },
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2850, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\",\"event_id\":\"{{ $json.odi_event_id }}\",\"intent\":\"{{ $json.intent }}\",\"ledger_seq\":\"{{ $json.ledger_sequence }}\"}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK WA",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3050, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// PREPARAR RESPUESTA API\n// ═══════════════════════════════════════════════════════════\nconst data = $json;\n\nreturn [{\n  json: {\n    status: 'ok',\n    event_id: data.odi_event_id || 'unknown',\n    intent: data.intent || 'GENERAL',\n    ledger_sequence: data.ledger_sequence || null,\n    ledger_response_seq: data.ledger_response_seq || null,\n    fitment_query_id: data.fitment_query_id || null,\n    fitment_count: data.fitment_count || 0,\n    entities: data.entities || {},\n    best_option: data.best_option || null,\n    response: data.response_text || ''\n  }\n}];"
+      },
+      "name": "Preparar API Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [2850, 560]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK API",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3050, 560]
+    }
+  ],
+  "connections": {
+    "Webhook Ingest": {
+      "main": [[{ "node": "Normalizer", "type": "main", "index": 0 }]]
+    },
+    "WA Verify": {
+      "main": [[{ "node": "Token OK", "type": "main", "index": 0 }]]
+    },
+    "Token OK": {
+      "main": [
+        [{ "node": "Challenge OK", "type": "main", "index": 0 }],
+        [{ "node": "Forbidden", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalizer": {
+      "main": [[{ "node": "Ignorar", "type": "main", "index": 0 }]]
+    },
+    "Ignorar": {
+      "main": [
+        [{ "node": "OK Ignored", "type": "main", "index": 0 }],
+        [{ "node": "Intent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Intent": {
+      "main": [[{ "node": "CES", "type": "main", "index": 0 }]]
+    },
+    "CES": {
+      "main": [[{ "node": "Ledger Ingest", "type": "main", "index": 0 }]]
+    },
+    "Ledger Ingest": {
+      "main": [[{ "node": "Merge Ledger", "type": "main", "index": 0 }]]
+    },
+    "Merge Ledger": {
+      "main": [[{ "node": "Usar M6.2", "type": "main", "index": 0 }]]
+    },
+    "Usar M6.2": {
+      "main": [
+        [{ "node": "Consultar M6.2", "type": "main", "index": 0 }],
+        [{ "node": "Response General", "type": "main", "index": 0 }]
+      ]
+    },
+    "Consultar M6.2": {
+      "main": [[{ "node": "Formatear Fitment", "type": "main", "index": 0 }]]
+    },
+    "Formatear Fitment": {
+      "main": [[{ "node": "Ledger Response", "type": "main", "index": 0 }]]
+    },
+    "Response General": {
+      "main": [[{ "node": "Ledger Response", "type": "main", "index": 0 }]]
+    },
+    "Ledger Response": {
+      "main": [[{ "node": "Merge Response", "type": "main", "index": 0 }]]
+    },
+    "Merge Response": {
+      "main": [[{ "node": "Es WA", "type": "main", "index": 0 }]]
+    },
+    "Es WA": {
+      "main": [
+        [{ "node": "Send WA", "type": "main", "index": 0 }],
+        [{ "node": "Preparar API Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send WA": {
+      "main": [[{ "node": "OK WA", "type": "main", "index": 0 }]]
+    },
+    "Preparar API Response": {
+      "main": [[{ "node": "OK API", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

@@ -1,0 +1,406 @@
+{
+  "name": "ODI_Unified_v5.3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi/ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-ingest",
+      "name": "🌐 Ingest Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 400],
+      "webhookId": "odi-ingest-main",
+      "notesInFlow": true,
+      "notes": "Punto único de entrada para TODOS los canales:\n- WhatsApp\n- Web\n- API\n- Futuro: Voz, Archivos, Cámara"
+    },
+    {
+      "parameters": {
+        "path": "odi/whatsapp/verify",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-wa-verify",
+      "name": "🔐 WhatsApp Verify",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 160],
+      "webhookId": "odi-wa-verify"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "token-valid",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "odi_whatsapp_verify_2026",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-token-valid",
+      "name": "Token Válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [300, 160]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "respond-challenge",
+      "name": "✅ Challenge OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [500, 80]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Forbidden",
+        "options": { "responseCode": 403 }
+      },
+      "id": "respond-forbidden",
+      "name": "❌ Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [500, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI NORMALIZER v5.3\n// Normaliza CUALQUIER entrada a formato ODI estándar\n// Soporta: WhatsApp, Web, API, (futuro: voz, archivos)\n// ═══════════════════════════════════════════════════════════\n\nconst input = $json.body || $json;\nconst headers = $json.headers || {};\n\n// Detectar canal de origen\nlet canal = 'api'; // default\nlet sourceData = {};\n\n// ─────────────────────────────────────────────────────────────\n// WHATSAPP\n// ─────────────────────────────────────────────────────────────\nif (input.entry && input.entry[0]?.changes) {\n  canal = 'whatsapp';\n  \n  const entry = input.entry[0];\n  const change = entry.changes[0];\n  const value = change?.value || {};\n  \n  // Status update (no message) - ignorar\n  if (!value.messages || !value.messages[0]) {\n    return [{\n      json: {\n        ignore: true,\n        reason: 'status_update',\n        canal: 'whatsapp'\n      }\n    }];\n  }\n  \n  const message = value.messages[0];\n  const contact = value.contacts ? value.contacts[0] : null;\n  \n  // Extraer texto según tipo\n  let text = '';\n  let inputType = 'text';\n  let mediaUrl = null;\n  \n  switch (message.type) {\n    case 'text':\n      text = message.text?.body || '';\n      break;\n    case 'button':\n      text = message.button?.text || '';\n      inputType = 'button';\n      break;\n    case 'interactive':\n      text = message.interactive?.button_reply?.title || \n             message.interactive?.list_reply?.title || '';\n      inputType = 'interactive';\n      break;\n    case 'image':\n      inputType = 'image';\n      mediaUrl = message.image?.id;\n      text = message.image?.caption || '[imagen]';\n      break;\n    case 'document':\n      inputType = 'document';\n      mediaUrl = message.document?.id;\n      text = message.document?.filename || '[documento]';\n      break;\n    case 'audio':\n      inputType = 'audio';\n      mediaUrl = message.audio?.id;\n      text = '[audio - requiere transcripción]';\n      break;\n    case 'location':\n      inputType = 'location';\n      text = `[ubicación: ${message.location?.latitude}, ${message.location?.longitude}]`;\n      break;\n  }\n  \n  sourceData = {\n    from: message.from,\n    phone_number_id: value.metadata?.phone_number_id || '',\n    message_id: message.id,\n    timestamp: message.timestamp,\n    contact_name: contact?.profile?.name || 'Usuario',\n    wa_id: contact?.wa_id || message.from,\n    input_type: inputType,\n    media_url: mediaUrl\n  };\n  \n  sourceData.text = text;\n}\n\n// ─────────────────────────────────────────────────────────────\n// WEB / API DIRECTA\n// ─────────────────────────────────────────────────────────────\nelse if (input.canal === 'web' || input.text) {\n  canal = input.canal || 'api';\n  sourceData = {\n    from: input.user_id || input.session_id || 'anonymous',\n    text: input.text || input.message || '',\n    input_type: input.type || 'text',\n    session_id: input.session_id,\n    metadata: input.metadata || {}\n  };\n}\n\n// ─────────────────────────────────────────────────────────────\n// FUTURO: Voz, Archivos, Código de barras\n// ─────────────────────────────────────────────────────────────\nelse if (input.audio_base64) {\n  canal = 'voice';\n  sourceData = {\n    from: input.user_id || 'anonymous',\n    text: '[audio - pendiente transcripción]',\n    input_type: 'audio',\n    audio_data: input.audio_base64\n  };\n  // TODO: Integrar Whisper para transcripción\n}\nelse if (input.barcode) {\n  canal = 'scanner';\n  sourceData = {\n    from: input.user_id || 'anonymous',\n    text: input.barcode,\n    input_type: 'barcode',\n    barcode_type: input.barcode_type || 'unknown'\n  };\n}\nelse {\n  // Entrada no reconocida\n  return [{\n    json: {\n      ignore: true,\n      reason: 'unknown_format',\n      raw: input\n    }\n  }];\n}\n\n// ─────────────────────────────────────────────────────────────\n// GENERAR EVENTO ODI NORMALIZADO\n// ─────────────────────────────────────────────────────────────\nconst eventId = 'ODI-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();\n\nreturn [{\n  json: {\n    ignore: false,\n    odi_event_id: eventId,\n    canal: canal,\n    timestamp: new Date().toISOString(),\n    ...sourceData\n  }\n}];"
+      },
+      "id": "normalizer",
+      "name": "🔄 ODI Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 400],
+      "notesInFlow": true,
+      "notes": "Normaliza CUALQUIER entrada a formato ODI estándar"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "should-ignore",
+              "leftValue": "={{ $json.ignore }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-ignore",
+      "name": "¿Ignorar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\": \"ignored\", \"reason\": \"{{ $json.reason }}\"}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "respond-ignored",
+      "name": "OK Ignorado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI INTENT CLASSIFIER v5.3\n// Clasifica la intención del usuario\n// ═══════════════════════════════════════════════════════════\n\nconst text = ($json.text || '').toLowerCase();\nconst inputType = $json.input_type || 'text';\n\n// ─────────────────────────────────────────────────────────────\n// CLASIFICACIÓN POR TIPO DE INPUT\n// ─────────────────────────────────────────────────────────────\nif (inputType === 'barcode') {\n  return [{ json: { ...$json, intent: 'BUSCAR_PRODUCTO', intent_confidence: 0.95 } }];\n}\nif (inputType === 'image') {\n  return [{ json: { ...$json, intent: 'IDENTIFICAR_PRODUCTO', intent_confidence: 0.7 } }];\n}\nif (inputType === 'audio') {\n  return [{ json: { ...$json, intent: 'TRANSCRIBIR_AUDIO', intent_confidence: 0.9 } }];\n}\nif (inputType === 'document') {\n  return [{ json: { ...$json, intent: 'PROCESAR_DOCUMENTO', intent_confidence: 0.85 } }];\n}\n\n// ─────────────────────────────────────────────────────────────\n// CLASIFICACIÓN POR TEXTO (NLU básico determinista)\n// ─────────────────────────────────────────────────────────────\nlet intent = 'CONSULTA_GENERAL';\nlet confidence = 0.5;\nlet entities = {};\n\n// FITMENT / COMPATIBILIDAD\nif (text.includes('sirve') || text.includes('compatible') || \n    text.includes('le queda') || text.includes('para que moto') ||\n    text.includes('que moto') || text.includes('fitment')) {\n  intent = 'FITMENT_QUERY';\n  confidence = 0.85;\n}\n// DISPONIBILIDAD / INVENTARIO\nelse if (text.includes('tiene') || text.includes('hay') || \n         text.includes('disponible') || text.includes('stock')) {\n  intent = 'CONSULTA_DISPONIBILIDAD';\n  confidence = 0.8;\n}\n// PRECIO\nelse if (text.includes('precio') || text.includes('cuanto') || \n         text.includes('cuesta') || text.includes('vale') ||\n         text.includes('valor')) {\n  intent = 'CONSULTA_PRECIO';\n  confidence = 0.85;\n}\n// INTENCIÓN DE COMPRA\nelse if (text.includes('comprar') || text.includes('quiero') || \n         text.includes('necesito') || text.includes('llevo') ||\n         text.includes('pedir') || text.includes('ordenar')) {\n  intent = 'INTENCION_COMPRA';\n  confidence = 0.8;\n}\n// ESTADO DE PEDIDO\nelse if (text.includes('pedido') || text.includes('orden') || \n         text.includes('envio') || text.includes('llega') ||\n         text.includes('tracking')) {\n  intent = 'ESTADO_PEDIDO';\n  confidence = 0.8;\n}\n// SOPORTE\nelse if (text.includes('problema') || text.includes('ayuda') || \n         text.includes('soporte') || text.includes('reclamo') ||\n         text.includes('devolucion')) {\n  intent = 'SOPORTE';\n  confidence = 0.75;\n}\n// SALUDO\nelse if (text.match(/^(hola|buenos|buenas|hi|hey|ola)/)) {\n  intent = 'SALUDO';\n  confidence = 0.9;\n}\n// CATÁLOGO\nelse if (text.includes('catalogo') || text.includes('productos') || \n         text.includes('que venden') || text.includes('que tienen')) {\n  intent = 'CATALOGO';\n  confidence = 0.7;\n}\n\n// ─────────────────────────────────────────────────────────────\n// EXTRAER ENTIDADES BÁSICAS\n// ─────────────────────────────────────────────────────────────\n// Detectar menciones de motos\nconst motosPattern = /(yamaha|honda|suzuki|kawasaki|bajaj|pulsar|fz|xtz|cb|cbr|ninja|duke|ktm|tvs|akt|hero)/gi;\nconst motosMatch = text.match(motosPattern);\nif (motosMatch) {\n  entities.marca_moto = motosMatch[0].toUpperCase();\n}\n\n// Detectar años\nconst yearPattern = /(19|20)\\d{2}/g;\nconst yearMatch = text.match(yearPattern);\nif (yearMatch) {\n  entities.año = yearMatch[0];\n}\n\n// Detectar repuestos comunes\nconst repuestosPattern = /(pastilla|freno|filtro|aceite|cadena|piñon|llanta|bateria|faro|direccional|espejo|manigueta|cable|clutch|embrague)/gi;\nconst repuestoMatch = text.match(repuestosPattern);\nif (repuestoMatch) {\n  entities.tipo_repuesto = repuestoMatch[0].toLowerCase();\n}\n\nreturn [{\n  json: {\n    ...$json,\n    intent: intent,\n    intent_confidence: confidence,\n    entities: entities\n  }\n}];"
+      },
+      "id": "intent-classifier",
+      "name": "🧠 Intent Classifier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 480],
+      "notesInFlow": true,
+      "notes": "Clasifica intención y extrae entidades"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI CES EVALUATOR v5.3\n// Control de Ejecución Segura - Evalúa si la acción puede\n// ejecutarse automáticamente o requiere intervención humana\n// ═══════════════════════════════════════════════════════════\n\nconst intent = $json.intent;\nconst canal = $json.canal;\nconst amount = parseFloat($json.amount) || 0;\n\n// ─────────────────────────────────────────────────────────────\n// UMBRALES CES (de CLAUDE.md v5.2)\n// ─────────────────────────────────────────────────────────────\nconst CES_THRESHOLDS = {\n  order_auto_approve: 200000,      // COP\n  payment_auto_approve: 100000,    // COP\n};\n\n// ─────────────────────────────────────────────────────────────\n// REGLAS POR INTENT\n// ─────────────────────────────────────────────────────────────\nconst INTENT_RULES = {\n  // AUTO: Se ejecutan sin confirmación\n  'SALUDO': { control: 'AUTO', risk: 'LOW' },\n  'CONSULTA_GENERAL': { control: 'AUTO', risk: 'LOW' },\n  'CONSULTA_PRECIO': { control: 'AUTO', risk: 'LOW' },\n  'CONSULTA_DISPONIBILIDAD': { control: 'AUTO', risk: 'LOW' },\n  'FITMENT_QUERY': { control: 'AUTO', risk: 'LOW' },\n  'ESTADO_PEDIDO': { control: 'AUTO', risk: 'LOW' },\n  'CATALOGO': { control: 'AUTO', risk: 'LOW' },\n  'SOPORTE': { control: 'AUTO', risk: 'LOW' },\n  'BUSCAR_PRODUCTO': { control: 'AUTO', risk: 'LOW' },\n  'IDENTIFICAR_PRODUCTO': { control: 'AUTO', risk: 'LOW' },\n  'TRANSCRIBIR_AUDIO': { control: 'AUTO', risk: 'LOW' },\n  'PROCESAR_DOCUMENTO': { control: 'AUTO', risk: 'MEDIUM' },\n  \n  // THRESHOLD: Depende del monto\n  'INTENCION_COMPRA': { control: 'THRESHOLD', threshold: CES_THRESHOLDS.order_auto_approve, risk: 'MEDIUM' },\n  \n  // ALWAYS_HUMAN: Siempre requiere confirmación\n  'CONFIRMAR_PEDIDO': { control: 'ALWAYS_HUMAN', risk: 'HIGH' },\n  'PROCESAR_PAGO': { control: 'ALWAYS_HUMAN', risk: 'CRITICAL' },\n  'MODIFICAR_PRECIO': { control: 'ALWAYS_HUMAN', risk: 'CRITICAL' },\n  \n  // BLOCKED: No permitido por este canal\n  'PROMOCION': { control: 'BLOCKED', risk: 'LOW' },\n};\n\n// ─────────────────────────────────────────────────────────────\n// EVALUACIÓN\n// ─────────────────────────────────────────────────────────────\nconst rule = INTENT_RULES[intent] || { control: 'AUTO', risk: 'LOW' };\n\nlet cesDecision = {\n  action: 'PROCEED',\n  requires_human: false,\n  risk_level: rule.risk,\n  reason: 'Auto-aprobado por política'\n};\n\nswitch (rule.control) {\n  case 'THRESHOLD':\n    if (amount > rule.threshold) {\n      cesDecision = {\n        action: 'AWAIT_HUMAN',\n        requires_human: true,\n        risk_level: 'HIGH',\n        reason: `Monto ($${amount.toLocaleString()}) supera umbral ($${rule.threshold.toLocaleString()})`\n      };\n    }\n    break;\n    \n  case 'ALWAYS_HUMAN':\n    cesDecision = {\n      action: 'AWAIT_HUMAN',\n      requires_human: true,\n      risk_level: rule.risk,\n      reason: 'Requiere aprobación humana obligatoria'\n    };\n    break;\n    \n  case 'BLOCKED':\n    cesDecision = {\n      action: 'BLOCK',\n      requires_human: false,\n      risk_level: rule.risk,\n      reason: `Intent ${intent} no permitido por este canal`\n    };\n    break;\n}\n\nreturn [{\n  json: {\n    ...$json,\n    ces_decision: cesDecision,\n    ces_version: '5.3'\n  }\n}];"
+      },
+      "id": "ces-evaluator",
+      "name": "⚖️ CES Evaluator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 480],
+      "notesInFlow": true,
+      "notes": "Control de Ejecución Segura"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id,\n  event_type,\n  category,\n  conversation_id,\n  session_id,\n  user_id,\n  action_type,\n  target_type,\n  target_id,\n  risk_level,\n  metadata,\n  event_hash\n) VALUES (\n  $1,\n  'CONVERSATION_STARTED'::event_type,\n  'CONVERSATION'::event_category,\n  $2,\n  $3,\n  $4,\n  'INGEST',\n  'message',\n  $5,\n  $6::risk_level,\n  $7::jsonb,\n  encode(sha256(($1 || $4 || $5 || now()::text)::bytea), 'hex')\n)\nRETURNING event_id, sequence_num, created_at;",
+        "options": {
+          "queryReplacement": "={{ [$json.odi_event_id, $json.odi_event_id, $json.odi_event_id, $json.from, $json.message_id || $json.odi_event_id, $json.ces_decision?.risk_level?.toLowerCase() || 'low', JSON.stringify({canal: $json.canal, intent: $json.intent, text: $json.text?.substring(0, 200), entities: $json.entities, ces_action: $json.ces_decision?.action})] }}"
+        }
+      },
+      "id": "log-ledger-ingest",
+      "name": "📜 Log Ledger",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [1140, 480],
+      "credentials": {
+        "postgres": {
+          "id": "odi-postgres",
+          "name": "ODI Postgres"
+        }
+      },
+      "notesInFlow": true,
+      "notes": "Registra en Audit Ledger"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "fitment",
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "id": "is-fitment", "leftValue": "={{ $json.intent }}", "rightValue": "FITMENT_QUERY", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "precio",
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "id": "is-precio", "leftValue": "={{ $json.intent }}", "rightValue": "CONSULTA_PRECIO", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "disponibilidad",
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "id": "is-disp", "leftValue": "={{ $json.intent }}", "rightValue": "CONSULTA_DISPONIBILIDAD", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "compra",
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "id": "is-compra", "leftValue": "={{ $json.intent }}", "rightValue": "INTENCION_COMPRA", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "general",
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+                "conditions": [
+                  { "id": "is-general", "leftValue": "={{ true }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "intent-router",
+      "name": "🔀 Intent Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1360, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://odi-m62-fitment:8802/fitment/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"q\": \"{{ $('🧠 Intent Classifier').item.json.text }}\", \"entities\": {{ JSON.stringify($('🧠 Intent Classifier').item.json.entities) }} }",
+        "options": { "timeout": 10000 }
+      },
+      "id": "query-fitment",
+      "name": "🔧 Consultar M6.2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1580, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI RESPONSE BUILDER v5.3\n// Construye la respuesta según el canal y el resultado\n// ═══════════════════════════════════════════════════════════\n\nconst originalData = $('⚖️ CES Evaluator').item.json;\nconst canal = originalData.canal;\nconst intent = originalData.intent;\nconst cesDecision = originalData.ces_decision;\n\n// Obtener datos de la fuente según el flujo\nlet sourceData = null;\nlet responseText = '';\n\n// Intentar obtener datos de M6.2 Fitment\ntry {\n  const fitmentResult = $('🔧 Consultar M6.2').item?.json;\n  if (fitmentResult && fitmentResult.results) {\n    const results = fitmentResult.results;\n    if (results.length > 0) {\n      responseText = `Encontré ${results.length} opciones:\\n\\n`;\n      results.slice(0, 3).forEach((r, i) => {\n        responseText += `${i+1}. ${r.nombre || r.title}\\n`;\n        if (r.precio) responseText += `   💰 $${r.precio.toLocaleString()} COP\\n`;\n        if (r.compatibilidad) responseText += `   ✅ ${r.compatibilidad}\\n`;\n      });\n      responseText += '\\n¿Te interesa alguno?';\n    } else {\n      responseText = 'No encontré resultados exactos para tu consulta. ¿Podrías darme más detalles como la marca y modelo de tu moto?';\n    }\n  }\n} catch (e) {\n  // No hay datos de Fitment, usar respuesta genérica\n}\n\n// Si no hay respuesta específica, usar genérica por intent\nif (!responseText) {\n  const responses = {\n    'SALUDO': `¡Hola ${originalData.contact_name || ''}! 👋 Soy el asistente de SRM. ¿En qué puedo ayudarte hoy?`,\n    'CONSULTA_GENERAL': 'Gracias por tu mensaje. ¿Podrías darme más detalles sobre lo que necesitas?',\n    'CONSULTA_PRECIO': 'Para darte el precio exacto, necesito saber el repuesto específico y el modelo de tu moto.',\n    'CONSULTA_DISPONIBILIDAD': 'Verificaré la disponibilidad. ¿Qué repuesto necesitas y para qué moto?',\n    'FITMENT_QUERY': 'Para verificar compatibilidad, dime el repuesto y el modelo exacto de tu moto (marca, referencia, año).',\n    'INTENCION_COMPRA': 'Excelente, te ayudo con tu compra. ¿Qué producto necesitas?',\n    'ESTADO_PEDIDO': 'Para consultar tu pedido, por favor dame el número de orden.',\n    'SOPORTE': 'Entiendo que tienes un inconveniente. Cuéntame más detalles para ayudarte.',\n    'CATALOGO': 'Puedes ver nuestro catálogo completo en somosrepuestosmotos.com. ¿Buscas algo específico?',\n  };\n  responseText = responses[intent] || 'Gracias por escribirnos. Un asesor te contactará pronto.';\n}\n\n// Si CES bloqueó, modificar respuesta\nif (cesDecision?.action === 'BLOCK') {\n  responseText = 'Lo siento, no puedo procesar esta solicitud automáticamente. Un asesor te contactará.';\n}\nif (cesDecision?.action === 'AWAIT_HUMAN') {\n  responseText += '\\n\\n⏳ Tu solicitud requiere validación. Te confirmaremos pronto.';\n}\n\nreturn [{\n  json: {\n    ...originalData,\n    response_text: responseText,\n    response_generated_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "response-builder",
+      "name": "💬 Response Builder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1800, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            { "id": "is-whatsapp", "leftValue": "={{ $json.canal }}", "rightValue": "whatsapp", "operator": { "type": "string", "operation": "equals" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-whatsapp",
+      "name": "¿WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2020, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v22.0/{{ $json.phone_number_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.from }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"{{ $json.response_text.replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"\n  }\n}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "send-whatsapp",
+      "name": "📤 Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2240, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "meta-whatsapp-auth",
+          "name": "Meta WhatsApp Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"odi_event_id\": \"{{ $json.odi_event_id }}\",\n  \"intent\": \"{{ $json.intent }}\",\n  \"canal\": \"{{ $json.canal }}\",\n  \"ces_action\": \"{{ $json.ces_decision?.action }}\"\n}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "respond-ok-wa",
+      "name": "✅ OK WhatsApp",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2460, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"odi_event_id\": \"{{ $json.odi_event_id }}\",\n  \"intent\": \"{{ $json.intent }}\",\n  \"canal\": \"{{ $json.canal }}\",\n  \"ces_action\": \"{{ $json.ces_decision?.action }}\",\n  \"response\": \"{{ $json.response_text.replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"\n}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "respond-ok-api",
+      "name": "✅ OK API",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2240, 560]
+    }
+  ],
+  "connections": {
+    "🌐 Ingest Webhook": {
+      "main": [[{ "node": "🔄 ODI Normalizer", "type": "main", "index": 0 }]]
+    },
+    "🔐 WhatsApp Verify": {
+      "main": [[{ "node": "Token Válido?", "type": "main", "index": 0 }]]
+    },
+    "Token Válido?": {
+      "main": [
+        [{ "node": "✅ Challenge OK", "type": "main", "index": 0 }],
+        [{ "node": "❌ Forbidden", "type": "main", "index": 0 }]
+      ]
+    },
+    "🔄 ODI Normalizer": {
+      "main": [[{ "node": "¿Ignorar?", "type": "main", "index": 0 }]]
+    },
+    "¿Ignorar?": {
+      "main": [
+        [{ "node": "OK Ignorado", "type": "main", "index": 0 }],
+        [{ "node": "🧠 Intent Classifier", "type": "main", "index": 0 }]
+      ]
+    },
+    "🧠 Intent Classifier": {
+      "main": [[{ "node": "⚖️ CES Evaluator", "type": "main", "index": 0 }]]
+    },
+    "⚖️ CES Evaluator": {
+      "main": [[{ "node": "📜 Log Ledger", "type": "main", "index": 0 }]]
+    },
+    "📜 Log Ledger": {
+      "main": [[{ "node": "🔀 Intent Router", "type": "main", "index": 0 }]]
+    },
+    "🔀 Intent Router": {
+      "main": [
+        [{ "node": "🔧 Consultar M6.2", "type": "main", "index": 0 }],
+        [{ "node": "💬 Response Builder", "type": "main", "index": 0 }],
+        [{ "node": "💬 Response Builder", "type": "main", "index": 0 }],
+        [{ "node": "💬 Response Builder", "type": "main", "index": 0 }],
+        [{ "node": "💬 Response Builder", "type": "main", "index": 0 }]
+      ]
+    },
+    "🔧 Consultar M6.2": {
+      "main": [[{ "node": "💬 Response Builder", "type": "main", "index": 0 }]]
+    },
+    "💬 Response Builder": {
+      "main": [[{ "node": "¿WhatsApp?", "type": "main", "index": 0 }]]
+    },
+    "¿WhatsApp?": {
+      "main": [
+        [{ "node": "📤 Enviar WhatsApp", "type": "main", "index": 0 }],
+        [{ "node": "✅ OK API", "type": "main", "index": 0 }]
+      ]
+    },
+    "📤 Enviar WhatsApp": {
+      "main": [[{ "node": "✅ OK WhatsApp", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "ODI", "id": "odi-tag" },
+    { "name": "v5.3", "id": "v53-tag" },
+    { "name": "Unified", "id": "unified-tag" }
+  ],
+  "pinData": {},
+  "versionId": "odi-unified-v5.3-20260124"
+}

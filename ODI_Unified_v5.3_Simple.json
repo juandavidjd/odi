@@ -1,0 +1,332 @@
+{
+  "name": "ODI_Unified_v5.3_Simple",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Ingest",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 400],
+      "webhookId": "odi-ingest"
+    },
+    {
+      "parameters": {
+        "path": "odi-wa-verify",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "WA Verify",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 200],
+      "webhookId": "odi-wa-verify"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.query['hub.verify_token'] }}",
+              "value2": "odi_whatsapp_verify_2026"
+            }
+          ]
+        }
+      },
+      "name": "Token OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Challenge OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 120]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Forbidden",
+        "options": {
+          "responseCode": 403
+        }
+      },
+      "name": "Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ODI NORMALIZER v5.3\nconst input = $json.body || $json;\n\n// WhatsApp\nif (input.entry && input.entry[0]?.changes) {\n  const value = input.entry[0].changes[0]?.value || {};\n  \n  if (!value.messages || !value.messages[0]) {\n    return [{ json: { ignore: true, reason: 'status_update' } }];\n  }\n  \n  const msg = value.messages[0];\n  const contact = value.contacts ? value.contacts[0] : null;\n  \n  let text = '';\n  if (msg.type === 'text') text = msg.text?.body || '';\n  else if (msg.type === 'button') text = msg.button?.text || '';\n  else if (msg.type === 'interactive') text = msg.interactive?.button_reply?.title || '';\n  \n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: 'whatsapp',\n      from: msg.from,\n      phone_number_id: value.metadata?.phone_number_id || '',\n      message_id: msg.id,\n      text: text,\n      contact_name: contact?.profile?.name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\n// API directa\nif (input.text) {\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: input.canal || 'api',\n      from: input.user_id || 'anonymous',\n      text: input.text,\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nreturn [{ json: { ignore: true, reason: 'unknown' } }];"
+      },
+      "name": "Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ignore }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Ignorar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ignored\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "OK Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// INTENT CLASSIFIER\nconst text = ($json.text || '').toLowerCase();\nlet intent = 'GENERAL';\n\nif (text.match(/^(hola|buenos|buenas|hi|hey)/)) intent = 'SALUDO';\nelse if (text.includes('sirve') || text.includes('compatible') || text.includes('para que moto')) intent = 'FITMENT';\nelse if (text.includes('precio') || text.includes('cuanto') || text.includes('vale')) intent = 'PRECIO';\nelse if (text.includes('tiene') || text.includes('hay') || text.includes('disponible')) intent = 'DISPONIBILIDAD';\nelse if (text.includes('comprar') || text.includes('quiero') || text.includes('necesito')) intent = 'COMPRA';\nelse if (text.includes('pedido') || text.includes('orden') || text.includes('envio')) intent = 'ESTADO_PEDIDO';\nelse if (text.includes('ayuda') || text.includes('problema') || text.includes('soporte')) intent = 'SOPORTE';\n\nreturn [{ json: { ...$json, intent: intent } }];"
+      },
+      "name": "Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// CES EVALUATOR\nconst intent = $json.intent;\nconst amount = parseFloat($json.amount) || 0;\n\nlet ces = { action: 'PROCEED', risk: 'LOW' };\n\nif (intent === 'COMPRA' && amount > 200000) {\n  ces = { action: 'AWAIT_HUMAN', risk: 'HIGH' };\n}\n\nreturn [{ json: { ...$json, ces: ces } }];"
+      },
+      "name": "CES",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1050, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RESPONSE BUILDER\nconst intent = $json.intent;\nconst name = $json.contact_name || '';\n\nconst responses = {\n  'SALUDO': `Hola ${name}! Soy el asistente de SRM. ¿En qué puedo ayudarte?`,\n  'FITMENT': 'Para verificar compatibilidad, dime el repuesto y modelo de tu moto.',\n  'PRECIO': 'Dime qué repuesto necesitas y para qué moto, y te doy el precio.',\n  'DISPONIBILIDAD': 'Verifico disponibilidad. ¿Qué repuesto y para qué moto?',\n  'COMPRA': 'Te ayudo con tu compra. ¿Qué producto necesitas?',\n  'ESTADO_PEDIDO': 'Dame el número de orden para consultar el estado.',\n  'SOPORTE': 'Cuéntame qué problema tienes y te ayudo.',\n  'GENERAL': 'Gracias por escribir. ¿Buscas algún repuesto específico?'\n};\n\nconst text = responses[intent] || responses['GENERAL'];\n\nreturn [{ json: { ...$json, response_text: text } }];"
+      },
+      "name": "Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1250, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.canal }}",
+              "value2": "whatsapp"
+            }
+          ]
+        }
+      },
+      "name": "Es WA",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1450, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v18.0/{{ $json.phone_number_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.from }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_text }}\"}}",
+        "options": {}
+      },
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1650, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\",\"event_id\":\"{{ $json.odi_event_id }}\",\"intent\":\"{{ $json.intent }}\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "OK WA",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\",\"event_id\":\"{{ $json.odi_event_id }}\",\"intent\":\"{{ $json.intent }}\",\"response\":\"{{ $json.response_text }}\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "OK API",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1650, 560]
+    }
+  ],
+  "connections": {
+    "Webhook Ingest": {
+      "main": [
+        [
+          {
+            "node": "Normalizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WA Verify": {
+      "main": [
+        [
+          {
+            "node": "Token OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token OK": {
+      "main": [
+        [
+          {
+            "node": "Challenge OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Forbidden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizer": {
+      "main": [
+        [
+          {
+            "node": "Ignorar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ignorar": {
+      "main": [
+        [
+          {
+            "node": "OK Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intent": {
+      "main": [
+        [
+          {
+            "node": "CES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CES": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response": {
+      "main": [
+        [
+          {
+            "node": "Es WA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es WA": {
+      "main": [
+        [
+          {
+            "node": "Send WA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OK API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WA": {
+      "main": [
+        [
+          {
+            "node": "OK WA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

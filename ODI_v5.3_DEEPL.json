@@ -1,0 +1,795 @@
+{
+  "name": "ODI_v5.3_DEEPL",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-ingest",
+      "name": "Webhook Ingest",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "odi-ingest"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ODI NORMALIZER v5.3 DEEPL\nconst input = $json.body || $json;\n\n// WhatsApp incoming\nif (input.entry && input.entry[0] && input.entry[0].changes) {\n  const value = input.entry[0].changes[0]?.value;\n  if (!value || !value.messages || !value.messages[0]) {\n    return [{ json: { ignore: true, reason: 'status_update' } }];\n  }\n  const msg = value.messages[0];\n  const contact = value.contacts ? value.contacts[0] : null;\n  \n  let text = '';\n  if (msg.type === 'text') text = msg.text?.body || '';\n  else if (msg.type === 'button') text = msg.button?.text || '';\n  else if (msg.type === 'interactive') {\n    text = msg.interactive?.button_reply?.title || \n           msg.interactive?.list_reply?.title || '';\n  }\n  \n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: 'whatsapp',\n      from: msg.from,\n      phone_number_id: value.metadata?.phone_number_id,\n      message_id: msg.id,\n      text: text,\n      original_text: text,\n      contact_name: contact?.profile?.name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\n// API directa\nif (input.text) {\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: input.canal || 'api',\n      from: input.user_id || 'anonymous',\n      text: input.text,\n      original_text: input.text,\n      contact_name: input.contact_name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nreturn [{ json: { ignore: true, reason: 'unknown_format' } }];"
+      },
+      "id": "normalizer",
+      "name": "Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ignore }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-ignore",
+      "name": "Ignorar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ignored', reason: $json.reason }) }}",
+        "options": {}
+      },
+      "id": "ok-ignored",
+      "name": "OK Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [800, 150]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DETECTAR IDIOMA\nconst text = $json.text || '';\n\n// Patrones simples para detectar idioma\nconst patterns = {\n  EN: /\\b(hello|hi|hey|do you have|looking for|need|want|please|thank|yes|no|price|how much|brake|filter|chain|oil)\\b/i,\n  PT: /\\b(olá|oi|bom dia|boa tarde|vocês|têm|tenho|preciso|quero|obrigado|sim|não|preço|quanto|freio|filtro|corrente|óleo)\\b/i,\n  ES: /\\b(hola|buenos|buenas|tienen|tengo|necesito|quiero|gracias|sí|no|precio|cuánto|freno|filtro|cadena|aceite|pastilla)\\b/i\n};\n\nlet detected_lang = 'ES'; // Default español\nlet confidence = 0;\n\nfor (const [lang, pattern] of Object.entries(patterns)) {\n  const matches = (text.match(pattern) || []).length;\n  if (matches > confidence) {\n    confidence = matches;\n    detected_lang = lang;\n  }\n}\n\n// Si hay caracteres específicos del portugués\nif (/[ãõç]/.test(text)) detected_lang = 'PT';\n\nconst needs_translation = detected_lang !== 'ES';\n\nreturn [{\n  json: {\n    ...$json,\n    detected_lang,\n    needs_translation,\n    lang_confidence: confidence\n  }\n}];"
+      },
+      "id": "detect-lang",
+      "name": "Detectar Idioma",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [800, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.needs_translation }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-translate",
+      "name": "Traducir?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1000, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-free.deepl.com/v2/translate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "DeepL-Auth-Key 6076c331-11ca-4934-a1fa-b6ca05d56686"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ [$json.text] }}"
+            },
+            {
+              "name": "target_lang",
+              "value": "ES"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "deepl-to-es",
+      "name": "DeepL → Español",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Actualizar texto con traducción\nconst translation = $json.translations?.[0]?.text || $('Detectar Idioma').item.json.text;\n\nreturn [{\n  json: {\n    ...$('Detectar Idioma').item.json,\n    text: translation,\n    translated_input: true\n  }\n}];"
+      },
+      "id": "apply-translation",
+      "name": "Aplicar Traducción",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-lang",
+      "name": "Merge Idioma",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1600, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ODI INTENT CLASSIFIER v5.3 DEEPL\nconst text = ($json.text || '').toLowerCase();\nlet goToFitment = false;\nlet intent = 'GENERAL';\nlet entities = {};\n\n// Extraer marca\nconst marcas = ['yamaha', 'honda', 'suzuki', 'kawasaki', 'bajaj', 'pulsar', 'ktm', 'tvs', 'akt', 'hero', 'auteco', 'victory', 'kymco', 'sym', 'piaggio', 'vespa', 'benelli', 'royal enfield', 'cfmoto', 'zontes'];\nfor (const m of marcas) {\n  if (text.includes(m)) { entities.marca = m.toUpperCase(); break; }\n}\n\n// Extraer modelo\nconst modelos = ['fz', 'mt', 'r15', 'r3', 'r6', 'r1', 'nmax', 'bws', 'xtz', 'ybr', 'fazer', 'crypton', 'cb', 'cbr', 'crf', 'ninja', 'duke', 'dominar', 'ns', 'rs', 'discover', 'boxer', 'platino', 'ct100', 'gixxer', 'gsxr', 'agility'];\nfor (const m of modelos) {\n  if (text.includes(m)) { entities.modelo = m.toUpperCase(); break; }\n}\n\n// Extraer año\nconst year = text.match(/(20[0-2][0-9]|19[89][0-9])/);\nif (year) entities.year = year[0];\n\n// Extraer cilindraje\nconst cc = text.match(/(\\d{2,4})\\s*cc/);\nif (cc) entities.cilindraje = cc[1];\n\n// Extraer repuesto (español + traducciones comunes)\nconst repuestos = ['pastilla', 'freno', 'filtro', 'aceite', 'cadena', 'piñon', 'kit', 'llanta', 'bateria', 'faro', 'espejo', 'cable', 'clutch', 'embrague', 'suspension', 'amortiguador', 'rodamiento', 'empaque', 'piston', 'biela', 'cigueñal', 'carburador', 'bujia', 'bobina', 'brake', 'pad', 'filter', 'oil', 'chain', 'tire', 'battery', 'mirror'];\nfor (const r of repuestos) {\n  if (text.includes(r)) { \n    // Normalizar a español\n    let repuesto_es = r;\n    if (r === 'brake' || r === 'pad') repuesto_es = 'pastilla';\n    if (r === 'filter') repuesto_es = 'filtro';\n    if (r === 'oil') repuesto_es = 'aceite';\n    if (r === 'chain') repuesto_es = 'cadena';\n    if (r === 'tire') repuesto_es = 'llanta';\n    if (r === 'battery') repuesto_es = 'bateria';\n    if (r === 'mirror') repuesto_es = 'espejo';\n    entities.repuesto = repuesto_es;\n    break;\n  }\n}\n\n// CLASIFICACIÓN\nif (entities.repuesto || entities.marca || entities.modelo || entities.cilindraje) {\n  goToFitment = true;\n  intent = 'FITMENT';\n} else if (text.match(/^(hola|buenos|buenas|hi|hey|hello|oi|olá)/)) {\n  intent = 'SALUDO';\n} else if (text.includes('precio') || text.includes('cuanto') || text.includes('price') || text.includes('how much')) {\n  intent = 'PRECIO';\n} else if (text.includes('comprar') || text.includes('quiero') || text.includes('buy') || text.includes('want')) {\n  intent = 'COMPRA';\n} else if (text.includes('pedido') || text.includes('orden') || text.includes('order')) {\n  intent = 'ESTADO_PEDIDO';\n} else if (text.includes('ayuda') || text.includes('problema') || text.includes('help')) {\n  intent = 'SOPORTE';\n}\n\nreturn [{ json: { ...$json, intent, entities, goToFitment } }];"
+      },
+      "id": "intent-classifier",
+      "name": "Intent Classifier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1800, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ODI CES EVALUATOR v5.3\nconst intent = $json.intent;\nconst amount = parseFloat($json.amount) || 0;\n\nlet ces = { action: 'PROCEED', risk: 'LOW' };\n\nif (intent === 'COMPRA' && amount > 200000) {\n  ces = { action: 'AWAIT_HUMAN', risk: 'HIGH', reason: 'Monto supera umbral' };\n}\n\nreturn [{ json: { ...$json, ces } }];"
+      },
+      "id": "ces-evaluator",
+      "name": "CES Evaluator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id, event_type, category, user_id, action_type,\n  target_type, target_id, risk_level, metadata, event_hash\n) VALUES (\n  '{{ $json.odi_event_id }}',\n  'ACTION_STARTED',\n  'ACTION',\n  '{{ $json.from }}',\n  '{{ $json.intent }}',\n  'message',\n  '{{ $json.message_id || $json.odi_event_id }}',\n  '{{ $json.ces.risk }}',\n  '{{ JSON.stringify({ canal: $json.canal, text: $json.original_text, text_es: $json.text, detected_lang: $json.detected_lang, entities: $json.entities, ces_action: $json.ces.action, goToFitment: $json.goToFitment }) }}'::jsonb,\n  encode(sha256(('{{ $json.odi_event_id }}' || '{{ $json.from }}' || '{{ $json.message_id || $json.odi_event_id }}' || now()::text)::bytea), 'hex')\n) RETURNING event_id, sequence_num, created_at;",
+        "options": {}
+      },
+      "id": "ledger-ingest",
+      "name": "Ledger Ingest",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [2200, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-odi",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-ledger",
+      "name": "Merge Ledger",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [2400, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $('CES Evaluator').item.json.goToFitment }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "router-fitment",
+      "name": "goToFitment?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2600, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://odi-m62-fitment:8802/fitment/query",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('CES Evaluator').item.json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "consultar-m62",
+      "name": "Consultar M6.2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2800, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FORMATEAR RESPUESTA FITMENT\nconst cesData = $('CES Evaluator').item.json;\nconst fitmentData = $json;\n\nconst results = fitmentData.results || [];\nconst count = results.length;\nconst best = results[0] || {};\n\nlet response_es = '';\nif (count > 0) {\n  response_es = `Encontré ${count} opciones.\\n\\nMEJOR OPCIÓN:\\n${best.title || 'Producto'}\\nPrecio: ${best.price_formatted || '$' + best.price}\\nCompatible: ${best.compatibility || 'Consultar'}\\nProveedor: ${best.client || 'N/A'}\\n\\nHay ${count - 1} opciones más disponibles.`;\n} else {\n  response_es = 'No encontré productos que coincidan. ¿Puedes darme más detalles sobre la moto o el repuesto?';\n}\n\nreturn [{\n  json: {\n    ...cesData,\n    fitment_query_id: fitmentData.query_id,\n    fitment_count: count,\n    best_option: best,\n    response_es: response_es,\n    needs_response_translation: cesData.detected_lang !== 'ES'\n  }\n}];"
+      },
+      "id": "format-fitment",
+      "name": "Formatear Fitment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [3000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RESPUESTA GENERAL (no fitment)\nconst data = $('CES Evaluator').item.json;\nconst intent = data.intent;\nconst contact = data.contact_name || 'Usuario';\n\nlet response_es = '';\n\nswitch(intent) {\n  case 'SALUDO':\n    response_es = `¡Hola ${contact}! 👋 Soy ODI, tu asistente de repuestos. ¿En qué puedo ayudarte hoy?`;\n    break;\n  case 'PRECIO':\n    response_es = 'Para darte precios necesito saber: ¿qué repuesto buscas y para qué moto?';\n    break;\n  case 'COMPRA':\n    response_es = 'Excelente, quieres hacer una compra. Por favor indícame el producto y la cantidad.';\n    break;\n  case 'ESTADO_PEDIDO':\n    response_es = 'Para consultar tu pedido necesito el número de orden. ¿Lo tienes?';\n    break;\n  case 'SOPORTE':\n    response_es = 'Entiendo que tienes un inconveniente. Cuéntame más para ayudarte.';\n    break;\n  default:\n    response_es = 'Soy ODI, especialista en repuestos de motos. Dime qué marca, modelo y año de moto tienes, y qué repuesto necesitas.';\n}\n\nreturn [{\n  json: {\n    ...data,\n    fitment_query_id: null,\n    fitment_count: 0,\n    best_option: null,\n    response_es: response_es,\n    needs_response_translation: data.detected_lang !== 'ES'\n  }\n}];"
+      },
+      "id": "response-general",
+      "name": "Response General",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [2800, 500]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-responses",
+      "name": "Merge Responses",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [3200, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.needs_response_translation }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-translate-response",
+      "name": "Traducir Respuesta?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [3400, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-free.deepl.com/v2/translate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "DeepL-Auth-Key 6076c331-11ca-4934-a1fa-b6ca05d56686"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ [$json.response_es] }}"
+            },
+            {
+              "name": "target_lang",
+              "value": "={{ $json.detected_lang }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "deepl-response",
+      "name": "DeepL → Idioma Original",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3600, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplicar traducción de respuesta\nconst prevData = $('Traducir Respuesta?').item.json;\nconst translation = $json.translations?.[0]?.text || prevData.response_es;\n\nreturn [{\n  json: {\n    ...prevData,\n    response: translation,\n    response_translated: true\n  }\n}];"
+      },
+      "id": "apply-response-translation",
+      "name": "Aplicar Traducción Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [3800, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sin traducción necesaria\nreturn [{\n  json: {\n    ...$json,\n    response: $json.response_es,\n    response_translated: false\n  }\n}];"
+      },
+      "id": "no-translate-response",
+      "name": "Sin Traducción",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [3600, 500]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-final-response",
+      "name": "Merge Final",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [4000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id, event_type, category, user_id, action_type,\n  target_type, target_id, risk_level, metadata, event_hash\n) VALUES (\n  '{{ $json.odi_event_id }}-R',\n  'ACTION_COMPLETED',\n  'RESPONSE',\n  '{{ $json.from }}',\n  'RESPONSE',\n  'message',\n  '{{ $json.fitment_query_id || $json.odi_event_id }}',\n  '{{ $json.ces.risk }}',\n  '{{ JSON.stringify({ intent: $json.intent, fitment_count: $json.fitment_count, best_option: $json.best_option, detected_lang: $json.detected_lang, response_translated: $json.response_translated, response_length: ($json.response || \"\").length }) }}'::jsonb,\n  encode(sha256(('{{ $json.odi_event_id }}-R' || '{{ $json.from }}' || now()::text)::bytea), 'hex')\n) RETURNING event_id, sequence_num;",
+        "options": {}
+      },
+      "id": "ledger-response",
+      "name": "Ledger Response",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [4200, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-odi",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-ledger-response",
+      "name": "Merge Ledger Response",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [4400, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Merge Final').item.json.canal }}",
+              "value2": "whatsapp"
+            }
+          ]
+        }
+      },
+      "id": "is-whatsapp",
+      "name": "Es WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [4600, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v18.0/{{ $('Merge Final').item.json.phone_number_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Merge Final').item.json.from }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": {{ JSON.stringify($('Merge Final').item.json.response) }}\n  }\n}",
+        "options": {}
+      },
+      "id": "send-wa",
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [4800, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wa-auth",
+          "name": "Meta WhatsApp Auth"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok_wa', event_id: $('Merge Final').item.json.odi_event_id }) }}",
+        "options": {}
+      },
+      "id": "ok-wa",
+      "name": "OK WA",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [5000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// PREPARAR API RESPONSE\nconst data = $('Merge Final').item.json;\nconst ledger = $('Ledger Response').item.json;\n\nreturn [{\n  json: {\n    status: 'ok',\n    event_id: data.odi_event_id,\n    intent: data.intent,\n    detected_lang: data.detected_lang,\n    translated: data.needs_translation || false,\n    ledger_sequence: $('Ledger Ingest').item.json.sequence_num?.toString() || '0',\n    ledger_response_seq: ledger.sequence_num?.toString() || '0',\n    fitment_query_id: data.fitment_query_id,\n    fitment_count: data.fitment_count || 0,\n    entities: data.entities,\n    best_option: data.best_option,\n    response: data.response,\n    response_es: data.response_es\n  }\n}];"
+      },
+      "id": "prepare-api-response",
+      "name": "Preparar API Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [4800, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "ok-api",
+      "name": "OK API",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [5000, 500]
+    }
+  ],
+  "connections": {
+    "Webhook Ingest": {
+      "main": [
+        [
+          {
+            "node": "Normalizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizer": {
+      "main": [
+        [
+          {
+            "node": "Ignorar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ignorar?": {
+      "main": [
+        [
+          {
+            "node": "OK Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Detectar Idioma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detectar Idioma": {
+      "main": [
+        [
+          {
+            "node": "Traducir?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traducir?": {
+      "main": [
+        [
+          {
+            "node": "DeepL → Español",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge Idioma",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "DeepL → Español": {
+      "main": [
+        [
+          {
+            "node": "Aplicar Traducción",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicar Traducción": {
+      "main": [
+        [
+          {
+            "node": "Merge Idioma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Idioma": {
+      "main": [
+        [
+          {
+            "node": "Intent Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intent Classifier": {
+      "main": [
+        [
+          {
+            "node": "CES Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CES Evaluator": {
+      "main": [
+        [
+          {
+            "node": "Ledger Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ledger Ingest": {
+      "main": [
+        [
+          {
+            "node": "Merge Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Ledger": {
+      "main": [
+        [
+          {
+            "node": "goToFitment?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "goToFitment?": {
+      "main": [
+        [
+          {
+            "node": "Consultar M6.2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response General",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar M6.2": {
+      "main": [
+        [
+          {
+            "node": "Formatear Fitment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear Fitment": {
+      "main": [
+        [
+          {
+            "node": "Merge Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response General": {
+      "main": [
+        [
+          {
+            "node": "Merge Responses",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Responses": {
+      "main": [
+        [
+          {
+            "node": "Traducir Respuesta?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traducir Respuesta?": {
+      "main": [
+        [
+          {
+            "node": "DeepL → Idioma Original",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin Traducción",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepL → Idioma Original": {
+      "main": [
+        [
+          {
+            "node": "Aplicar Traducción Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicar Traducción Respuesta": {
+      "main": [
+        [
+          {
+            "node": "Merge Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sin Traducción": {
+      "main": [
+        [
+          {
+            "node": "Merge Final",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Final": {
+      "main": [
+        [
+          {
+            "node": "Ledger Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ledger Response": {
+      "main": [
+        [
+          {
+            "node": "Merge Ledger Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Ledger Response": {
+      "main": [
+        [
+          {
+            "node": "Es WhatsApp?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es WhatsApp?": {
+      "main": [
+        [
+          {
+            "node": "Send WA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar API Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WA": {
+      "main": [
+        [
+          {
+            "node": "OK WA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar API Response": {
+      "main": [
+        [
+          {
+            "node": "OK API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-01-26T00:00:00.000Z",
+  "versionId": "deepl-v1"
+}

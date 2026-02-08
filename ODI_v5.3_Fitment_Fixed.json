@@ -1,0 +1,279 @@
+{
+  "name": "ODI_v5.3_Fitment_Fixed",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Ingest",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 400],
+      "webhookId": "odi-ingest"
+    },
+    {
+      "parameters": {
+        "path": "odi-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "WA Verify",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 200],
+      "webhookId": "odi-wa-verify"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.query['hub.verify_token'] }}",
+              "value2": "odi_whatsapp_verify_2026"
+            }
+          ]
+        }
+      },
+      "name": "Token OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "Challenge OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 120]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Forbidden",
+        "options": { "responseCode": 403 }
+      },
+      "name": "Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ODI NORMALIZER v5.3\nconst input = $json.body || $json;\n\nif (input.entry && input.entry[0]?.changes) {\n  const value = input.entry[0].changes[0]?.value || {};\n  if (!value.messages || !value.messages[0]) {\n    return [{ json: { ignore: true, reason: 'status_update' } }];\n  }\n  const msg = value.messages[0];\n  const contact = value.contacts ? value.contacts[0] : null;\n  let text = '';\n  if (msg.type === 'text') text = msg.text?.body || '';\n  else if (msg.type === 'button') text = msg.button?.text || '';\n  else if (msg.type === 'interactive') text = msg.interactive?.button_reply?.title || '';\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: 'whatsapp',\n      from: msg.from,\n      phone_number_id: value.metadata?.phone_number_id || '',\n      message_id: msg.id,\n      text: text,\n      contact_name: contact?.profile?.name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nif (input.text) {\n  return [{\n    json: {\n      ignore: false,\n      odi_event_id: 'ODI-' + Date.now().toString(36).toUpperCase(),\n      canal: input.canal || 'api',\n      from: input.user_id || 'anonymous',\n      text: input.text,\n      contact_name: input.contact_name || 'Usuario',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nreturn [{ json: { ignore: true, reason: 'unknown' } }];"
+      },
+      "name": "Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.ignore }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Ignorar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ignored\"}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// INTENT + ROUTER COMBINADO - SIEMPRE USA M6.2 SI HAY REPUESTO/MOTO\nconst text = ($json.text || '').toLowerCase();\nlet goToFitment = false;\nlet intent = 'GENERAL';\nlet entities = {};\n\n// Extraer marca\nconst marcas = ['yamaha', 'honda', 'suzuki', 'kawasaki', 'bajaj', 'pulsar', 'ktm', 'tvs', 'akt', 'hero', 'auteco', 'victory'];\nfor (const m of marcas) {\n  if (text.includes(m)) { entities.marca = m.toUpperCase(); break; }\n}\n\n// Extraer modelo\nconst modelos = ['fz', 'mt', 'r15', 'r3', 'nmax', 'bws', 'xtz', 'ybr', 'fazer', 'cb', 'cbr', 'ninja', 'duke', 'dominar', 'ns', 'discover', 'boxer', 'ct100', 'gixxer', 'agility'];\nfor (const m of modelos) {\n  if (text.includes(m)) { entities.modelo = m.toUpperCase(); break; }\n}\n\n// Extraer año\nconst year = text.match(/(20[0-2][0-9])/);\nif (year) entities.año = year[0];\n\n// Extraer repuesto\nconst repuestos = ['pastilla', 'freno', 'filtro', 'aceite', 'cadena', 'piñon', 'kit', 'llanta', 'bateria', 'faro', 'espejo', 'cable', 'clutch', 'embrague', 'suspension', 'amortiguador'];\nfor (const r of repuestos) {\n  if (text.includes(r)) { entities.repuesto = r; break; }\n}\n\n// DECISION: Si hay CUALQUIER entidad de repuesto/moto → M6.2\nif (entities.repuesto || entities.marca || entities.modelo) {\n  goToFitment = true;\n  intent = 'FITMENT';\n} else if (text.match(/^(hola|buenos|buenas|hi|hey)/)) {\n  intent = 'SALUDO';\n} else if (text.includes('precio') || text.includes('cuanto')) {\n  intent = 'PRECIO';\n} else if (text.includes('comprar') || text.includes('quiero')) {\n  intent = 'COMPRA';\n} else if (text.includes('pedido') || text.includes('orden')) {\n  intent = 'ESTADO_PEDIDO';\n} else if (text.includes('ayuda') || text.includes('problema')) {\n  intent = 'SOPORTE';\n}\n\nreturn [{ json: { ...$json, intent, entities, goToFitment } }];"
+      },
+      "name": "Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// CES\nconst ces = { action: 'PROCEED', risk: 'LOW' };\nreturn [{ json: { ...$json, ces } }];"
+      },
+      "name": "CES",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1050, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.goToFitment }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Usar M6.2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1250, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://odi-m62-fitment:8802/fitment/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"q\": \"{{ $json.text }}\"}",
+        "options": { "timeout": 15000 }
+      },
+      "name": "Consultar M6.2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FORMATEAR RESPUESTA M6.2\nconst fitment = $json;\nconst original = $('CES').first().json;\nlet responseText = '';\n\nif (fitment.status === 'success' && fitment.results_count > 0) {\n  const main = fitment.main_result;\n  responseText = `✅ Encontré ${fitment.results_count} opciones.\\n\\n`;\n  responseText += `🏆 *Mejor opción:*\\n`;\n  responseText += `${main.title}\\n`;\n  responseText += `💰 ${main.price_formatted}\\n`;\n  responseText += `🏍️ ${main.compatibility}\\n`;\n  responseText += `📦 Proveedor: ${main.client}\\n\\n`;\n  if (fitment.results_count > 1) {\n    responseText += `Hay ${fitment.results_count - 1} opciones más. ¿Te interesa ver alternativas?`;\n  }\n} else {\n  responseText = 'No encontré resultados exactos. ¿Me das más detalles de tu moto (marca, modelo, año)?';\n}\n\nreturn [{ json: { ...original, response_text: responseText, fitment_query_id: fitment.query_id || null } }];"
+      },
+      "name": "Formatear Fitment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1650, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RESPUESTA GENERAL\nconst input = $json;\nconst name = input.contact_name || '';\nconst responses = {\n  'SALUDO': `¡Hola ${name}! 👋 Soy el asistente de SRM. ¿En qué puedo ayudarte?`,\n  'PRECIO': 'Dime qué repuesto y para qué moto, y te doy el precio.',\n  'COMPRA': 'Te ayudo con tu compra. ¿Qué necesitas?',\n  'ESTADO_PEDIDO': 'Dame el número de orden para consultar.',\n  'SOPORTE': 'Cuéntame qué problema tienes.',\n  'GENERAL': 'Gracias por escribir. ¿Buscas algún repuesto? Dime marca y modelo de tu moto.'\n};\nconst text = responses[input.intent] || responses['GENERAL'];\nreturn [{ json: { ...input, response_text: text } }];"
+      },
+      "name": "Response General",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1450, 560]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.canal }}",
+              "value2": "whatsapp"
+            }
+          ]
+        }
+      },
+      "name": "Es WA",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1850, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/987256874463607/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.from }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_text }}\"}}",
+        "options": {}
+      },
+      "name": "Send WA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2050, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\",\"event_id\":\"{{ $json.odi_event_id }}\",\"intent\":\"{{ $json.intent }}\",\"fitment_query_id\":\"{{ $json.fitment_query_id || 'N/A' }}\"}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK WA",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2250, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"ok\",\"event_id\":\"{{ $json.odi_event_id }}\",\"intent\":\"{{ $json.intent }}\",\"fitment_query_id\":\"{{ $json.fitment_query_id || 'N/A' }}\",\"response\":\"{{ $json.response_text }}\"}",
+        "options": { "responseCode": 200 }
+      },
+      "name": "OK API",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2050, 560]
+    }
+  ],
+  "connections": {
+    "Webhook Ingest": {
+      "main": [[{ "node": "Normalizer", "type": "main", "index": 0 }]]
+    },
+    "WA Verify": {
+      "main": [[{ "node": "Token OK", "type": "main", "index": 0 }]]
+    },
+    "Token OK": {
+      "main": [
+        [{ "node": "Challenge OK", "type": "main", "index": 0 }],
+        [{ "node": "Forbidden", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalizer": {
+      "main": [[{ "node": "Ignorar", "type": "main", "index": 0 }]]
+    },
+    "Ignorar": {
+      "main": [
+        [{ "node": "OK Ignored", "type": "main", "index": 0 }],
+        [{ "node": "Intent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Intent": {
+      "main": [[{ "node": "CES", "type": "main", "index": 0 }]]
+    },
+    "CES": {
+      "main": [[{ "node": "Usar M6.2", "type": "main", "index": 0 }]]
+    },
+    "Usar M6.2": {
+      "main": [
+        [{ "node": "Consultar M6.2", "type": "main", "index": 0 }],
+        [{ "node": "Response General", "type": "main", "index": 0 }]
+      ]
+    },
+    "Consultar M6.2": {
+      "main": [[{ "node": "Formatear Fitment", "type": "main", "index": 0 }]]
+    },
+    "Formatear Fitment": {
+      "main": [[{ "node": "Es WA", "type": "main", "index": 0 }]]
+    },
+    "Response General": {
+      "main": [[{ "node": "Es WA", "type": "main", "index": 0 }]]
+    },
+    "Es WA": {
+      "main": [
+        [{ "node": "Send WA", "type": "main", "index": 0 }],
+        [{ "node": "OK API", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send WA": {
+      "main": [[{ "node": "OK WA", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false
+}

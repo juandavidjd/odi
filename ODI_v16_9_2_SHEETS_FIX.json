@@ -1,0 +1,1111 @@
+{
+  "name": "ODI_v16_9_2_SHEETS_FIX",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi-v16-5-action",
+        "options": {}
+      },
+      "name": "La Chispa1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        304
+      ],
+      "id": "f91b4d45-4c17-493d-a300-31af424e179c",
+      "webhookId": "odi-v16-5-webhook"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "sku",
+              "value": "={{ $json.body.sku ?? 'SKU_DESCONOCIDO' }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $json.body.producto ?? 'Producto no especificado' }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $json.body.intent ?? 'VENTA_DESCONOCIDA' }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $json.body.origen ?? 'sistema' }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $json.body.odi_event_id ?? 'ODI-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase() }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ Number($json.body.precio_catalogo) || 0 }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ Number($json.body.precio_final) || 0 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Normalizar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        304
+      ],
+      "id": "ec5a73be-69e4-418b-82e9-dc4e750665a5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "sku-valido",
+              "leftValue": "={{ $json.sku }}",
+              "rightValue": "SKU_DESCONOCIDO",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿SKU Válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        304
+      ],
+      "id": "212642c6-c7bb-4a4b-9cc3-09fc71da8ac4"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "sku",
+              "value": "={{ $json.sku }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $json.producto }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $json.intent }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $json.origen }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $json.odi_event_id }}"
+            },
+            {
+              "name": "modo",
+              "value": "SUPERVISADO"
+            },
+            {
+              "name": "motivo_decision",
+              "value": "SKU_DESCONOCIDO_FORZAR_SUPERVISION"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ $json.precio_catalogo }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ $json.precio_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Forzar SUPERVISADO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        528
+      ],
+      "id": "5c6b370a-6537-47a7-a5ff-6179066d035d"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1KK-aUJbKvUut9K5ySDmzIkGBi6mhY62C2xxP2XVG8aY",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ODI_AUDITORIA_2026__AUTONOMIA_SKU",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "sku",
+              "lookupValue": "={{ $json.sku }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Lookup Autonomia SKU",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -208,
+        144
+      ],
+      "id": "340829d1-8f5f-4cd0-b5fa-53391c9c813f",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleApi": {
+          "id": "MKZEI18BXIpOJ6xL",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "tiene-resultados",
+              "leftValue": "={{ $json.autonomia_habilitada }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿SKU Autónomo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        144
+      ],
+      "id": "a9b077ef-5b98-4668-815c-db553c0a59f9"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "sku",
+              "value": "={{ $('Normalizar').item.json.sku }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $('Normalizar').item.json.producto }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $('Normalizar').item.json.intent }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $('Normalizar').item.json.origen }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $('Normalizar').item.json.timestamp }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $('Normalizar').item.json.odi_event_id }}"
+            },
+            {
+              "name": "modo",
+              "value": "AUTOMATICO"
+            },
+            {
+              "name": "motivo_decision",
+              "value": "SKU_CON_HISTORIAL_AUTONOMIA"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ $('Normalizar').item.json.precio_catalogo }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ $('Normalizar').item.json.precio_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Modo AUTOMATICO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d02b8fb4-f7eb-419d-b7fe-fa3d3f0f2697"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "sku",
+              "value": "={{ $('Normalizar').item.json.sku }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $('Normalizar').item.json.producto }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $('Normalizar').item.json.intent }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $('Normalizar').item.json.origen }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $('Normalizar').item.json.timestamp }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $('Normalizar').item.json.odi_event_id }}"
+            },
+            {
+              "name": "modo",
+              "value": "SUPERVISADO"
+            },
+            {
+              "name": "motivo_decision",
+              "value": "SIN_HISTORIAL_AUTONOMIA"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ $('Normalizar').item.json.precio_catalogo }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ $('Normalizar').item.json.precio_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Modo SUPERVISADO",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        0,
+        288
+      ],
+      "id": "59b876a4-2e23-4f37-8703-89b1bfa79872"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ Number($json.precio_final) || 0 }}",
+              "rightValue": 200000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        352,
+        304
+      ],
+      "id": "838cb430-b12c-4cf0-9a7d-dab296568357",
+      "name": "¿Excede Umbral?"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp ?? new Date().toISOString() }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $json.intent ?? 'VENTA_DESCONOCIDA' }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $json.origen ?? 'sistema' }}"
+            },
+            {
+              "name": "sku",
+              "value": "={{ $json.sku ?? 'SKU_DESCONOCIDO' }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $json.producto ?? 'Producto no especificado' }}"
+            },
+            {
+              "name": "modo",
+              "value": "={{ $json.modo ?? 'SUPERVISADO' }}"
+            },
+            {
+              "name": "order_id",
+              "value": "={{ $json.order_id ?? 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase() }}"
+            },
+            {
+              "name": "motivo_decision",
+              "value": "={{ $json.motivo_decision ?? '' }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $json.odi_event_id ?? 'ODI-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase() }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ Number($json.precio_catalogo) || 0 }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ Number($json.precio_final) || 0 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "BLINDAJE_UNIVERSAL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        560,
+        304
+      ],
+      "id": "f76685eb-95c8-4ebc-ab54-2b9d2ef446e2"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            },
+            {
+              "name": "intent",
+              "value": "={{ $json.intent }}"
+            },
+            {
+              "name": "origen",
+              "value": "={{ $json.origen }}"
+            },
+            {
+              "name": "sku",
+              "value": "={{ $json.sku }}"
+            },
+            {
+              "name": "producto",
+              "value": "={{ $json.producto }}"
+            },
+            {
+              "name": "modo",
+              "value": "={{ $json.modo }}"
+            },
+            {
+              "name": "order_id",
+              "value": "={{ $json.order_id }}"
+            },
+            {
+              "name": "motivo_decision",
+              "value": "={{ $json.motivo_decision }}"
+            },
+            {
+              "name": "odi_event_id",
+              "value": "={{ $json.odi_event_id }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio_catalogo",
+              "value": "={{ $json.precio_catalogo }}"
+            },
+            {
+              "name": "precio_final",
+              "value": "={{ $json.precio_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "ODI_NORMALIZADO_FINAL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        768,
+        304
+      ],
+      "id": "c5a2364e-9438-41cb-b92d-37f903cf78c2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://odi-voice:7777/odi/voice-response",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"token\": \"odi_strong_password_2026\",\n  \"intent\": \"{{ $json.intent }}\",\n  \"modo\": \"{{ $json.modo }}\",\n  \"producto\": \"{{ $json.producto }}\",\n  \"precio_final\": {{ $json.precio_final }},\n  \"odi_event_id\": \"{{ $json.odi_event_id }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        432
+      ],
+      "id": "0578e698-d409-45b3-911a-5e554ec29e51",
+      "name": "Voz ODI",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "es-automatico",
+              "leftValue": "={{ $json.modo }}",
+              "rightValue": "AUTOMATICO",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Modo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        976,
+        160
+      ],
+      "id": "9a88fccf-3b0e-4c37-8cd2-828c5c1cbdeb"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KK-aUJbKvUut9K5ySDmzIkGBi6mhY62C2xxP2XVG8aY",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ODI_AUDITORIA_2026__AUDITORIA",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "producto",
+              "displayName": "producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "precio_catalogo",
+              "displayName": "precio_catalogo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "precio_final",
+              "displayName": "precio_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "intent",
+              "displayName": "intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "modo",
+              "displayName": "modo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "aprobado_por",
+              "displayName": "aprobado_por",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "riesgo_evitar",
+              "displayName": "riesgo_evitar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "motivo_decision",
+              "displayName": "motivo_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "odi_event_id",
+              "displayName": "odi_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nota",
+              "displayName": "nota",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Log AUTO",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1184,
+        80
+      ],
+      "id": "f3b533a2-4f44-4d15-a094-b1b9d03f9662",
+      "credentials": {
+        "googleApi": {
+          "id": "MKZEI18BXIpOJ6xL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KK-aUJbKvUut9K5ySDmzIkGBi6mhY62C2xxP2XVG8aY",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ODI_AUDITORIA_2026__AUDITORIA",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "producto",
+              "displayName": "producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "precio_catalogo",
+              "displayName": "precio_catalogo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "precio_final",
+              "displayName": "precio_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "intent",
+              "displayName": "intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "modo",
+              "displayName": "modo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "aprobado_por",
+              "displayName": "aprobado_por",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "riesgo_evitar",
+              "displayName": "riesgo_evitar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "motivo_decision",
+              "displayName": "motivo_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "odi_event_id",
+              "displayName": "odi_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nota",
+              "displayName": "nota",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Log SUPERVISADO",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1184,
+        240
+      ],
+      "id": "a83d7178-1319-4edc-860a-d1cb4cd72805",
+      "credentials": {
+        "googleApi": {
+          "id": "MKZEI18BXIpOJ6xL",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "La Chispa1": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "¿SKU Válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿SKU Válido?": {
+      "main": [
+        [
+          {
+            "node": "Lookup Autonomia SKU",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Forzar SUPERVISADO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forzar SUPERVISADO": {
+      "main": [
+        [
+          {
+            "node": "¿Excede Umbral?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Autonomia SKU": {
+      "main": [
+        [
+          {
+            "node": "¿SKU Autónomo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿SKU Autónomo?": {
+      "main": [
+        [
+          {
+            "node": "Set Modo AUTOMATICO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Modo SUPERVISADO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Modo AUTOMATICO": {
+      "main": [
+        [
+          {
+            "node": "¿Excede Umbral?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Modo SUPERVISADO": {
+      "main": [
+        [
+          {
+            "node": "¿Excede Umbral?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Excede Umbral?": {
+      "main": [
+        [
+          {
+            "node": "BLINDAJE_UNIVERSAL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "BLINDAJE_UNIVERSAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BLINDAJE_UNIVERSAL": {
+      "main": [
+        [
+          {
+            "node": "ODI_NORMALIZADO_FINAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ODI_NORMALIZADO_FINAL": {
+      "main": [
+        [
+          {
+            "node": "Voz ODI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Modo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modo": {
+      "main": [
+        [
+          {
+            "node": "Log AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log SUPERVISADO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "9fd0266a-30c9-4936-aa27-820be91d8a98",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c7e0026636987867295a8ef341c35f84cab3bc565ef2272e474cc5b1f37842df"
+  },
+  "id": "dBQQbkusMEngO0gDSd1Od",
+  "tags": []
+}

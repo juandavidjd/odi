@@ -1,0 +1,618 @@
+{
+  "name": "ODI WhatsApp Dispatcher v5.3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi/whatsapp/dispatch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-dispatch",
+      "name": "Webhook Dispatch",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "odi-whatsapp-dispatch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// ODI CES EVALUATOR v5.3\n// Aplica Control de Ejecución Segura antes de enviar WhatsApp\n// ═══════════════════════════════════════════════════════════\n\nconst input = $input.first().json;\n\n// Extraer datos del request\nconst intent = input.intent || 'UNKNOWN';\nconst amount = parseFloat(input.amount) || 0;\nconst phone = input.phone || '';\nconst templateName = input.template || '';\nconst variables = input.variables || {};\nconst conversationId = input.conversation_id || '';\nconst sessionId = input.session_id || '';\n\n// ═══════════════════════════════════════════════════════════\n// UMBRALES CES (de CLAUDE.md v5.2)\n// ═══════════════════════════════════════════════════════════\nconst CES_THRESHOLDS = {\n  order_auto_approve: 200000,      // COP\n  payment_auto_approve: 100000,    // COP\n  price_change_auto_approve: 0.10, // 10%\n};\n\n// ═══════════════════════════════════════════════════════════\n// MAPEO INTENT → CONTROL\n// ═══════════════════════════════════════════════════════════\nconst INTENT_RULES = {\n  'S0_SALUDO': { control: 'AUTO', category: 'UTILITY' },\n  'CONFIRMAR_PEDIDO': { control: 'THRESHOLD', threshold: CES_THRESHOLDS.order_auto_approve, category: 'UTILITY' },\n  'ESTADO_ORDEN': { control: 'AUTO', category: 'UTILITY' },\n  'S2_CONTRACT': { control: 'ALWAYS_HUMAN', category: 'UTILITY' },\n  'SOPORTE': { control: 'AUTO', category: 'UTILITY' },\n  'NOTIFICACION_ENVIO': { control: 'AUTO', category: 'UTILITY' },\n  'CATALOGO': { control: 'BLOCKED', category: 'MARKETING' },\n  'PROMOCION': { control: 'BLOCKED', category: 'MARKETING' },\n};\n\n// ═══════════════════════════════════════════════════════════\n// EVALUACIÓN\n// ═══════════════════════════════════════════════════════════\nconst rule = INTENT_RULES[intent] || { control: 'BLOCKED', category: 'UNKNOWN' };\n\nlet decision = {\n  action: 'BLOCK',\n  reason: 'Intent no reconocido',\n  requires_human: false,\n  can_send: false,\n};\n\nswitch (rule.control) {\n  case 'AUTO':\n    decision = {\n      action: 'SEND',\n      reason: 'Auto-aprobado por política',\n      requires_human: false,\n      can_send: true,\n    };\n    break;\n    \n  case 'THRESHOLD':\n    if (amount <= rule.threshold) {\n      decision = {\n        action: 'SEND',\n        reason: `Monto ($${amount.toLocaleString()}) bajo umbral ($${rule.threshold.toLocaleString()})`,\n        requires_human: false,\n        can_send: true,\n      };\n    } else {\n      decision = {\n        action: 'AWAIT_HUMAN',\n        reason: `Monto ($${amount.toLocaleString()}) supera umbral ($${rule.threshold.toLocaleString()})`,\n        requires_human: true,\n        can_send: false,\n      };\n    }\n    break;\n    \n  case 'ALWAYS_HUMAN':\n    decision = {\n      action: 'AWAIT_HUMAN',\n      reason: 'Siempre requiere aprobación humana',\n      requires_human: true,\n      can_send: false,\n    };\n    break;\n    \n  case 'BLOCKED':\n    decision = {\n      action: 'BLOCK',\n      reason: `Intent ${intent} bloqueado (categoría ${rule.category})`,\n      requires_human: false,\n      can_send: false,\n    };\n    break;\n}\n\n// ═══════════════════════════════════════════════════════════\n// RESULTADO\n// ═══════════════════════════════════════════════════════════\nconst messageId = `WA-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`;\n\nreturn {\n  // Datos originales\n  intent,\n  amount,\n  phone,\n  template: templateName,\n  variables,\n  conversation_id: conversationId,\n  session_id: sessionId,\n  \n  // Decisión CES\n  ces_decision: decision,\n  category: rule.category,\n  \n  // Metadata\n  message_id: messageId,\n  timestamp: new Date().toISOString(),\n  ces_version: '5.3',\n};"
+      },
+      "id": "ces-evaluator",
+      "name": "CES Evaluator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "send",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "condition-send",
+                    "leftValue": "={{ $json.ces_decision.action }}",
+                    "rightValue": "SEND",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "await_human",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "condition-await",
+                    "leftValue": "={{ $json.ces_decision.action }}",
+                    "rightValue": "AWAIT_HUMAN",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "block",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "condition-block",
+                    "leftValue": "={{ $json.ces_decision.action }}",
+                    "rightValue": "BLOCK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ces-router",
+      "name": "CES Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// BUILD WHATSAPP PAYLOAD\n// Construye el payload para WhatsApp Cloud API\n// ═══════════════════════════════════════════════════════════\n\nconst input = $input.first().json;\n\n// Limpiar número de teléfono\nlet phone = input.phone.replace(/[^0-9]/g, '');\nif (phone.startsWith('57') && phone.length === 12) {\n  // Ya tiene código de país Colombia\n} else if (phone.length === 10) {\n  phone = '57' + phone; // Agregar código Colombia\n}\n\n// Construir componentes de la plantilla\nconst components = [];\n\n// Variables del body\nif (input.variables && Object.keys(input.variables).length > 0) {\n  const bodyParams = Object.values(input.variables).map(value => ({\n    type: 'text',\n    text: String(value)\n  }));\n  \n  components.push({\n    type: 'body',\n    parameters: bodyParams\n  });\n}\n\n// Payload final para WhatsApp Cloud API\nconst payload = {\n  messaging_product: 'whatsapp',\n  recipient_type: 'individual',\n  to: phone,\n  type: 'template',\n  template: {\n    name: input.template,\n    language: {\n      code: 'es'\n    }\n  }\n};\n\nif (components.length > 0) {\n  payload.template.components = components;\n}\n\nreturn {\n  ...input,\n  wa_payload: payload,\n  phone_normalized: phone,\n};"
+      },
+      "id": "build-wa-payload",
+      "name": "Build WA Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v18.0/{{ $env.META_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.wa_payload }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "meta-whatsapp-auth",
+          "name": "Meta WhatsApp Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// PREPARE LEDGER EVENT\n// Prepara el evento para registrar en Audit Ledger (Postgres)\n// ═══════════════════════════════════════════════════════════\n\nconst input = $input.first().json;\nconst waResponse = input; // Respuesta de WhatsApp incluida\n\n// Determinar tipo de evento\nlet eventType = 'ACTION_COMPLETED';\nlet status = 'sent';\n\nif (waResponse.error) {\n  eventType = 'ACTION_FAILED';\n  status = 'error';\n}\n\n// Hash del teléfono (no guardar número completo)\nconst crypto = require('crypto');\nconst phoneHash = crypto.createHash('sha256')\n  .update(input.phone_normalized || '')\n  .digest('hex')\n  .substring(0, 16);\n\n// Evento para Ledger\nconst ledgerEvent = {\n  event_id: `EVT-WA-${Date.now()}`,\n  event_type: eventType,\n  category: 'ACTION',\n  conversation_id: input.conversation_id || null,\n  session_id: input.session_id || null,\n  action_type: 'WHATSAPP_SEND',\n  target_type: 'whatsapp_message',\n  target_id: input.message_id,\n  metadata: JSON.stringify({\n    channel: 'whatsapp',\n    intent: input.intent,\n    template: input.template,\n    category: input.category,\n    ces_action: input.ces_decision?.action,\n    ces_reason: input.ces_decision?.reason,\n    recipient_hash: phoneHash,\n    wa_message_id: waResponse.messages?.[0]?.id || null,\n    status: status,\n    amount: input.amount || 0,\n  }),\n};\n\nreturn {\n  ...input,\n  ledger_event: ledgerEvent,\n  wa_message_id: waResponse.messages?.[0]?.id || null,\n  send_status: status,\n};"
+      },
+      "id": "prepare-ledger-sent",
+      "name": "Prepare Ledger (Sent)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id,\n  event_type,\n  category,\n  conversation_id,\n  session_id,\n  action_type,\n  target_type,\n  target_id,\n  metadata,\n  event_hash\n) VALUES (\n  $1,\n  $2::event_type,\n  $3::event_category,\n  $4,\n  $5,\n  $6,\n  $7,\n  $8,\n  $9::jsonb,\n  encode(sha256(($1 || $2 || $8 || now()::text)::bytea), 'hex')\n)\nRETURNING event_id, sequence_num, event_hash, created_at;",
+        "options": {
+          "queryReplacement": "={{ [$json.ledger_event.event_id, $json.ledger_event.event_type, $json.ledger_event.category, $json.ledger_event.conversation_id, $json.ledger_event.session_id, $json.ledger_event.action_type, $json.ledger_event.target_type, $json.ledger_event.target_id, $json.ledger_event.metadata] }}"
+        }
+      },
+      "id": "log-to-ledger",
+      "name": "Log to Ledger",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [1560, 200],
+      "credentials": {
+        "postgres": {
+          "id": "odi-postgres",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// CREATE PENDING APPROVAL\n// Crea registro de aprobación pendiente para CES\n// ═══════════════════════════════════════════════════════════\n\nconst input = $input.first().json;\n\n// Generar ID de aprobación\nconst approvalId = `APR-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;\n\n// Datos para almacenar en Redis (o tabla de pendientes)\nconst pendingApproval = {\n  approval_id: approvalId,\n  message_id: input.message_id,\n  intent: input.intent,\n  amount: input.amount,\n  phone: input.phone,\n  template: input.template,\n  variables: input.variables,\n  conversation_id: input.conversation_id,\n  session_id: input.session_id,\n  ces_reason: input.ces_decision?.reason,\n  created_at: new Date().toISOString(),\n  status: 'pending',\n  expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h\n};\n\n// Mensaje para el admin (notificación interna)\nconst adminNotification = {\n  title: '🔔 Aprobación CES Requerida',\n  body: `Intent: ${input.intent}\\nMonto: $${(input.amount || 0).toLocaleString()} COP\\nRazón: ${input.ces_decision?.reason}`,\n  approval_id: approvalId,\n};\n\nreturn {\n  ...input,\n  pending_approval: pendingApproval,\n  admin_notification: adminNotification,\n};"
+      },
+      "id": "create-pending-approval",
+      "name": "Create Pending Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "command": "set",
+        "key": "=odi:pending:{{ $json.pending_approval.approval_id }}",
+        "value": "={{ JSON.stringify($json.pending_approval) }}",
+        "expire": true,
+        "ttl": 86400
+      },
+      "id": "store-pending-redis",
+      "name": "Store in Redis",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "credentials": {
+        "redis": {
+          "id": "odi-redis",
+          "name": "ODI Redis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// PREPARE BLOCK RESPONSE\n// Prepara respuesta para mensajes bloqueados\n// ═══════════════════════════════════════════════════════════\n\nconst input = $input.first().json;\n\n// Evento para Ledger\nconst ledgerEvent = {\n  event_id: `EVT-WA-BLK-${Date.now()}`,\n  event_type: 'ACTION_BLOCKED',\n  category: 'ACTION',\n  conversation_id: input.conversation_id || null,\n  session_id: input.session_id || null,\n  action_type: 'WHATSAPP_SEND',\n  target_type: 'whatsapp_message',\n  target_id: input.message_id,\n  metadata: JSON.stringify({\n    channel: 'whatsapp',\n    intent: input.intent,\n    template: input.template,\n    category: input.category,\n    ces_action: 'BLOCK',\n    ces_reason: input.ces_decision?.reason,\n    amount: input.amount || 0,\n  }),\n};\n\nreturn {\n  ...input,\n  ledger_event: ledgerEvent,\n  send_status: 'blocked',\n};"
+      },
+      "id": "prepare-block-response",
+      "name": "Prepare Block Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_events (\n  event_id,\n  event_type,\n  category,\n  conversation_id,\n  session_id,\n  action_type,\n  target_type,\n  target_id,\n  metadata,\n  event_hash\n) VALUES (\n  $1,\n  $2::event_type,\n  $3::event_category,\n  $4,\n  $5,\n  $6,\n  $7,\n  $8,\n  $9::jsonb,\n  encode(sha256(($1 || $2 || $8 || now()::text)::bytea), 'hex')\n)\nRETURNING event_id, sequence_num, event_hash, created_at;",
+        "options": {
+          "queryReplacement": "={{ [$json.ledger_event.event_id, $json.ledger_event.event_type, $json.ledger_event.category, $json.ledger_event.conversation_id, $json.ledger_event.session_id, $json.ledger_event.action_type, $json.ledger_event.target_type, $json.ledger_event.target_id, $json.ledger_event.metadata] }}"
+        }
+      },
+      "id": "log-block-to-ledger",
+      "name": "Log Block to Ledger",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [1120, 400],
+      "credentials": {
+        "postgres": {
+          "id": "odi-postgres",
+          "name": "ODI Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"action\": \"{{ $json.ces_decision?.action || 'SENT' }}\",\n  \"message_id\": \"{{ $json.message_id }}\",\n  \"wa_message_id\": \"{{ $json.wa_message_id || null }}\",\n  \"status\": \"{{ $json.send_status || 'sent' }}\",\n  \"ledger_event_id\": \"{{ $json.ledger_event?.event_id }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "response-success",
+      "name": "Response Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"action\": \"AWAIT_HUMAN\",\n  \"message_id\": \"{{ $json.message_id }}\",\n  \"approval_id\": \"{{ $json.pending_approval?.approval_id }}\",\n  \"reason\": \"{{ $json.ces_decision?.reason }}\",\n  \"status\": \"pending_approval\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "response-pending",
+      "name": "Response Pending",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"action\": \"BLOCKED\",\n  \"message_id\": \"{{ $json.message_id }}\",\n  \"reason\": \"{{ $json.ces_decision?.reason }}\",\n  \"category\": \"{{ $json.category }}\",\n  \"status\": \"blocked\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {
+          "responseCode": 403
+        }
+      },
+      "id": "response-blocked",
+      "name": "Response Blocked",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "odi/whatsapp/approve",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-approve",
+      "name": "Webhook Approve",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 560],
+      "webhookId": "odi-whatsapp-approve"
+    },
+    {
+      "parameters": {
+        "command": "get",
+        "key": "=odi:pending:{{ $json.body.approval_id }}"
+      },
+      "id": "get-pending-redis",
+      "name": "Get Pending",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [460, 560],
+      "credentials": {
+        "redis": {
+          "id": "odi-redis",
+          "name": "ODI Redis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════\n// PROCESS APPROVAL\n// Procesa la aprobación/rechazo del admin\n// ═══════════════════════════════════════════════════════════\n\nconst webhookData = $('Webhook Approve').first().json;\nconst redisData = $input.first().json;\n\n// Parsear datos de Redis\nlet pendingData;\ntry {\n  pendingData = JSON.parse(redisData);\n} catch (e) {\n  return {\n    error: true,\n    message: 'Approval not found or expired',\n    approval_id: webhookData.body?.approval_id\n  };\n}\n\nconst decision = webhookData.body?.decision || 'REJECT'; // APPROVE o REJECT\nconst adminId = webhookData.body?.admin_id || 'unknown';\n\nif (decision === 'APPROVE') {\n  // Preparar para envío\n  return {\n    ...pendingData,\n    approved: true,\n    approved_by: adminId,\n    approved_at: new Date().toISOString(),\n    _confirmed: true, // Flag para bypass CES\n  };\n} else {\n  // Rechazado\n  return {\n    ...pendingData,\n    approved: false,\n    rejected_by: adminId,\n    rejected_at: new Date().toISOString(),\n    reason: webhookData.body?.reason || 'Rejected by admin',\n  };\n}"
+      },
+      "id": "process-approval",
+      "name": "Process Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 560]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-approved",
+              "leftValue": "={{ $json.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-approved",
+      "name": "If Approved",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 560]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"action\": \"APPROVED\",\n  \"message_id\": \"{{ $json.message_id }}\",\n  \"wa_message_id\": \"{{ $json.wa_message_id || null }}\",\n  \"approved_by\": \"{{ $json.approved_by }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "response-approved",
+      "name": "Response Approved",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 520]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"action\": \"REJECTED\",\n  \"message_id\": \"{{ $json.message_id }}\",\n  \"rejected_by\": \"{{ $json.rejected_by }}\",\n  \"reason\": \"{{ $json.reason }}\",\n  \"timestamp\": \"{{ $now.toISO() }}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "response-rejected",
+      "name": "Response Rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 660]
+    },
+    {
+      "parameters": {
+        "command": "del",
+        "key": "=odi:pending:{{ $json.approval_id }}"
+      },
+      "id": "delete-pending-redis",
+      "name": "Delete Pending",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [1340, 520],
+      "credentials": {
+        "redis": {
+          "id": "odi-redis",
+          "name": "ODI Redis"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Dispatch": {
+      "main": [
+        [
+          {
+            "node": "CES Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CES Evaluator": {
+      "main": [
+        [
+          {
+            "node": "CES Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CES Router": {
+      "main": [
+        [
+          {
+            "node": "Build WA Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Pending Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Block Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build WA Payload": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Prepare Ledger (Sent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Ledger (Sent)": {
+      "main": [
+        [
+          {
+            "node": "Log to Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Ledger": {
+      "main": [
+        [
+          {
+            "node": "Response Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Pending Approval": {
+      "main": [
+        [
+          {
+            "node": "Store in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in Redis": {
+      "main": [
+        [
+          {
+            "node": "Response Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Block Response": {
+      "main": [
+        [
+          {
+            "node": "Log Block to Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Block to Ledger": {
+      "main": [
+        [
+          {
+            "node": "Response Blocked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Approve": {
+      "main": [
+        [
+          {
+            "node": "Get Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending": {
+      "main": [
+        [
+          {
+            "node": "Process Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Approval": {
+      "main": [
+        [
+          {
+            "node": "If Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Approved": {
+      "main": [
+        [
+          {
+            "node": "Build WA Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Pending": {
+      "main": [
+        [
+          {
+            "node": "Response Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "ODI",
+      "id": "odi-tag"
+    },
+    {
+      "name": "WhatsApp",
+      "id": "whatsapp-tag"
+    },
+    {
+      "name": "CES",
+      "id": "ces-tag"
+    }
+  ],
+  "pinData": {},
+  "versionId": "v5.3-20260124"
+}
